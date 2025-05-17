@@ -52,7 +52,7 @@ export const BurgerConstructor = ({ ingredients }) => {
 					<span className='text text_type_digits-medium'>{totalPrice}</span>
 					<CurrencyIcon type='primary' />
 				</div>
-				<Button type='primary' size='large'>
+				<Button type='primary' size='large' htmlType='submit'>
 					Оформить заказ
 				</Button>
 			</div>

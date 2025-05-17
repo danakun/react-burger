@@ -1,13 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 import styles from './burger-ingredients.module.css';
 import * as PropTypes from 'prop-types';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import { ingredientPropType } from '@utils/prop-types.js';
 import { IngredientsCategory } from './ingredients-category/ingredients-category';
-import { useInView } from 'react-intersection-observer';
+import { Modal } from '../modal/modal';
+import { IngredientDetails } from './ingredient-details/ingredient-details';
 
 export const BurgerIngredients = ({ ingredients }) => {
 	const [currentTab, setCurrentTab] = useState('bun');
+	const [selectedIngredient, setSelectedIngredient] = useState(null);
+
+	// Handler for ingredient click
+	const handleIngredientClick = (ingredient) => {
+		setSelectedIngredient(ingredient);
+	};
+
+	// Handler for closing the modal
+	const handleCloseModal = () => {
+		setSelectedIngredient(null);
+	};
 
 	const titleBunRef = useRef(null);
 	const titleMainRef = useRef(null);
@@ -82,6 +95,7 @@ export const BurgerIngredients = ({ ingredients }) => {
 						title='Булки'
 						ingredients={buns}
 						titleRef={titleBunRef}
+						onIngredientClick={handleIngredientClick}
 					/>
 				</div>
 
@@ -90,6 +104,7 @@ export const BurgerIngredients = ({ ingredients }) => {
 						title='Начинки'
 						ingredients={mains}
 						titleRef={titleMainRef}
+						onIngredientClick={handleIngredientClick}
 					/>
 				</div>
 
@@ -98,9 +113,16 @@ export const BurgerIngredients = ({ ingredients }) => {
 						title='Соусы'
 						ingredients={sauces}
 						titleRef={titleSauceRef}
+						onIngredientClick={handleIngredientClick}
 					/>
 				</div>
 			</div>
+			{/* Modal */}
+			{selectedIngredient && (
+				<Modal title='Детали ингредиента' onClose={handleCloseModal}>
+					<IngredientDetails ingredient={selectedIngredient} />
+				</Modal>
+			)}
 		</section>
 	);
 };

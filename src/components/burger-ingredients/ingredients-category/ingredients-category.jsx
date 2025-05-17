@@ -4,7 +4,13 @@ import * as PropTypes from 'prop-types';
 import { IngredientItem } from '../ingredient-item/ingredient-item';
 import { ingredientPropType } from '@utils/prop-types.js';
 
-export const IngredientsCategory = ({ title, ingredients, ids, titleRef }) => {
+export const IngredientsCategory = ({
+	title,
+	ingredients,
+	ids,
+	titleRef,
+	onIngredientClick,
+}) => {
 	return (
 		<div className={styles['ingredients-category']} ref={ids}>
 			<h2 className='text text_type_main-medium mb-6' ref={titleRef}>
@@ -16,6 +22,7 @@ export const IngredientsCategory = ({ title, ingredients, ids, titleRef }) => {
 						key={ingredient._id}
 						ingredient={ingredient}
 						count={0}
+						onClick={() => onIngredientClick(ingredient)}
 					/>
 				))}
 			</ul>

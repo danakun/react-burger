@@ -1,4 +1,46 @@
-.ingredient-details {
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	max-width: 520px;
+	margin: 0 auto;
+	padding: 0 20px 60px;
+}
+
+.image {
+	width: 480px;
+	max-width: 480px;
+	height: 240px;
+	height: auto;
+	object-fit: contain;
+}
+
+.name {
+	text-align: center;
+}
+
+.nutritionGrid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 20px;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.nutritionItem {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	text-align: center;
+}
+
+.preloaderWrapper {
 	display: flex;
 	justify-content: center;
+	align-items: center;
+	width: 480px;
+	height: 240px;
 }

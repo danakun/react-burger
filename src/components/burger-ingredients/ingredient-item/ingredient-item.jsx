@@ -7,9 +7,19 @@ import {
 	Counter,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
-export const IngredientItem = ({ ingredient }) => {
+export const IngredientItem = ({ ingredient, onClick }) => {
+	const handleKeyDown = (e) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			onClick();
+		}
+	};
+
 	return (
-		<li className={`${styles.ingredient} pt-6 pb-8 pl-4 pr-4`}>
+		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+		<li
+			className={`${styles.ingredient} pt-6 pb-8 pl-4 pr-4`}
+			onClick={onClick}
+			onKeyDown={handleKeyDown}>
 			<Counter count={1} size='default' extraClass='m-1' />
 			<img
 				src={ingredient.image}
@@ -32,4 +42,5 @@ export const IngredientItem = ({ ingredient }) => {
 IngredientItem.propTypes = {
 	ingredient: ingredientPropType.isRequired,
 	count: PropTypes.number,
+	onClick: PropTypes.func.isRequired,
 };
