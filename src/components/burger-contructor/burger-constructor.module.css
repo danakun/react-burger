@@ -5,3 +5,34 @@
 	padding-bottom: 20px;
 	color: var(--text-primary-color);
 }
+
+.burger_components {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.fillings_list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	max-height: calc(100vh - 500px);
+	margin: 0;
+	padding: 0;
+	padding-right: 8px;
+	overflow-y: auto;
+	list-style-type: none;
+}
+
+.order_details {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 40px;
+}
+
+.total_price {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}

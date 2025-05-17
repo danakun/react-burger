@@ -13,3 +13,30 @@
 	text-align: center;
 	list-style-type: none;
 }
+
+.ingredients_container {
+	display: flex;
+	flex-direction: column;
+	gap: 40px;
+	max-height: calc(100vh - 300px);
+	padding-right: 8px;
+	overflow-y: auto;
+}
+
+/* Media query for responsiveness */
+
+@media screen and (width <= 1280px) {
+	.ingredients_container {
+		max-height: calc(100vh - 350px);
+	}
+}
+
+@media screen and (width <= 768px) {
+	.burger_ingredients {
+		max-width: 100%;
+	}
+
+	.ingredients_container {
+		max-height: calc(100vh - 400px);
+	}
+}
