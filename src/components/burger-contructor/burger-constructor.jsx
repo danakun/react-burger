@@ -21,7 +21,6 @@ export const BurgerConstructor = ({ ingredients }) => {
 
 	const totalPrice = useMemo(() => {
 		let price = 0;
-
 		if (selectedBun) {
 			price += selectedBun.price * 2;
 		}
@@ -35,7 +34,6 @@ export const BurgerConstructor = ({ ingredients }) => {
 
 	// Hardcoded
 	const orderNumber = '034537';
-
 	const handleOrderClick = () => {
 		setIsOrderModalOpen(true);
 	};

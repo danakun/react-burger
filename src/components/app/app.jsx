@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styles from './app.module.css';
-// import { ingredients } from '@utils/ingredients.js';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients.jsx';
 import { BurgerConstructor } from '@components/burger-contructor/burger-constructor.jsx';
 import { AppHeader } from '@components/app-header/app-header.jsx';
 import { Preloader } from '@components/preloader/preloader.jsx';
+import { INGREDIENTS_ENDPOINT } from '@utils/constants.js';
 
 export const App = () => {
 	const [state, setState] = useState({
@@ -17,10 +17,7 @@ export const App = () => {
 		const fetchIngredients = async () => {
 			try {
 				setState((prevState) => ({ ...prevState, isLoading: true }));
-
-				const response = await fetch(
-					'https://norma.nomoreparties.space/api/ingredients'
-				);
+				const response = await fetch(INGREDIENTS_ENDPOINT);
 
 				if (!response.ok) {
 					throw new Error(`Failed with status: ${response.status}`);
@@ -44,7 +41,7 @@ export const App = () => {
 		};
 
 		fetchIngredients();
-	}, []);
+	}, []); // on mount
 
 	return (
 		<div className={styles.app}>
