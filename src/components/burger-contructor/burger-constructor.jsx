@@ -1,15 +1,19 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import styles from './burger-constructor.module.css';
 import * as PropTypes from 'prop-types';
 import { ingredientPropType } from '@utils/prop-types.js';
 import {
-	Button,
 	CurrencyIcon,
+	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 import { BunItem } from './bun-item/bun-item';
 import { FillingItem } from './filling-item/filling-item';
+import { Modal } from '../modal/modal';
+import { OrderDetails } from './order-details/order-details';
 
 export const BurgerConstructor = ({ ingredients }) => {
+	const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+
 	const buns = ingredients.filter((item) => item.type === 'bun');
 	const fillings = ingredients.filter((item) => item.type !== 'bun');
 
@@ -28,6 +32,17 @@ export const BurgerConstructor = ({ ingredients }) => {
 
 		return price;
 	}, [selectedBun, fillings]);
+
+	// Hardcoded
+	const orderNumber = '034537';
+
+	const handleOrderClick = () => {
+		setIsOrderModalOpen(true);
+	};
+
+	const handleCloseModal = () => {
+		setIsOrderModalOpen(false);
+	};
 
 	return (
 		<section className={styles.burger_constructor}>
@@ -52,10 +67,22 @@ export const BurgerConstructor = ({ ingredients }) => {
 					<span className='text text_type_digits-medium'>{totalPrice}</span>
 					<CurrencyIcon type='primary' />
 				</div>
-				<Button type='primary' size='large' htmlType='submit'>
+				<Button
+					type='primary'
+					size='large'
+					htmlType='button'
+					onClick={handleOrderClick}
+					disabled={!selectedBun || fillings.length === 0}>
 					Оформить заказ
 				</Button>
 			</div>
+
+			{/* Modal */}
+			{isOrderModalOpen && (
+				<Modal onClose={handleCloseModal}>
+					<OrderDetails orderNumber={orderNumber} />
+				</Modal>
+			)}
 		</section>
 	);
 };

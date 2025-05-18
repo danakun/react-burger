@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import PropTypes from 'prop-types';
+import { string, node, func } from 'prop-types';
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import { ModalOverlay } from '../modal-overlay/modal-overlay';
 import styles from './modal.module.css';
 
-// Create modal container if it doesn't exist
+// make modal container if necessary
 const getModalRoot = () => {
 	let modalRoot = document.getElementById('modals');
 	if (!modalRoot) {
@@ -17,7 +17,7 @@ const getModalRoot = () => {
 };
 
 export const Modal = ({ children, title, onClose }) => {
-	// Handle ESC key press
+	// handle ESC
 	useEffect(() => {
 		const handleEscClose = (e) => {
 			if (e.key === 'Escape') {
@@ -50,7 +50,7 @@ export const Modal = ({ children, title, onClose }) => {
 };
 
 Modal.propTypes = {
-	children: PropTypes.node.isRequired,
-	title: PropTypes.string,
-	onClose: PropTypes.func.isRequired,
+	children: node.isRequired,
+	title: string,
+	onClose: func.isRequired,
 };

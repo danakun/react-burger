@@ -1,10 +1,10 @@
 import React from 'react';
-import styles from './filling-item.module.css';
 import * as PropTypes from 'prop-types';
+import styles from './filling-item.module.css';
 import { ingredientPropType } from '@utils/prop-types.js';
 import {
-	ConstructorElement,
 	DragIcon,
+	ConstructorElement,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
 export const FillingItem = ({ filling, isDraggable }) => {

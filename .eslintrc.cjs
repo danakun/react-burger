@@ -55,5 +55,6 @@ module.exports = {
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
 		'postcss-modules/no-undef-class': 'error',
 		'postcss-modules/no-unused-class': 'warn',
+		"import/named": "off",
 	},
 };
