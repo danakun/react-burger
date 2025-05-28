@@ -1,47 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styles from './app.module.css';
 import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients.jsx';
 import { BurgerConstructor } from '@components/burger-contructor/burger-constructor.jsx';
 import { AppHeader } from '@components/app-header/app-header.jsx';
 import { Preloader } from '@components/preloader/preloader.jsx';
-import { INGREDIENTS_ENDPOINT } from '@utils/constants.js';
+// import { INGREDIENTS_ENDPOINT } from '@utils/constants.js';
+import { fetchIngredients } from '../../services/ingredientsSlice';
 
 export const App = () => {
-	const [state, setState] = useState({
-		isLoading: false,
-		hasError: false,
-		ingredients: [],
-	});
+	const dispatch = useDispatch();
+	const { isLoading, hasError } = useSelector((state) => state.ingredients);
 
 	useEffect(() => {
-		const fetchIngredients = async () => {
-			try {
-				setState((prevState) => ({ ...prevState, isLoading: true }));
-				const response = await fetch(INGREDIENTS_ENDPOINT);
-
-				if (!response.ok) {
-					throw new Error(`Failed with status: ${response.status}`);
-				}
-
-				const result = await response.json();
-
-				setState({
-					isLoading: false,
-					hasError: false,
-					ingredients: result.data || [],
-				});
-			} catch (error) {
-				console.error('Error fetching ingredients:', error);
-				setState({
-					isLoading: false,
-					hasError: true,
-					ingredients: [],
-				});
-			}
-		};
-
-		fetchIngredients();
-	}, []); // on mount
+		dispatch(fetchIngredients());
+	}, [dispatch]);
 
 	return (
 		<div className={styles.app}>
@@ -51,17 +24,18 @@ export const App = () => {
 				Соберите бургер
 			</h1>
 			<main className={`${styles.main} pl-5 pr-5`}>
-				{state.isLoading ? (
+				{isLoading ? (
 					<Preloader />
-				) : state.hasError ? (
+				) : hasError ? (
 					<p className='text text_type_main-medium text_color_error'>
 						Произошла ошибка при загрузке ингредиентов. Пожалуйста, попробуйте
 						позже.
 					</p>
 				) : (
 					<>
-						<BurgerIngredients ingredients={state.ingredients} />
-						<BurgerConstructor ingredients={state.ingredients} />
+						{/* No props needed - components get data from Redux */}
+						<BurgerIngredients />
+						<BurgerConstructor />
 					</>
 				)}
 			</main>

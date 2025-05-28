@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { useSelector, useDispatch } from 'react-redux';
 import styles from './burger-ingredients.module.css';
 import * as PropTypes from 'prop-types';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
@@ -7,28 +8,47 @@ import { ingredientPropType } from '@utils/prop-types.js';
 import { IngredientsCategory } from './ingredients-category/ingredients-category';
 import { Modal } from '../modal/modal';
 import { IngredientDetails } from './ingredient-details/ingredient-details';
+import {
+	setCurrentIngredient,
+	clearCurrentIngredient,
+} from '../../services/ingredientDetailsSlice';
 
-export const BurgerIngredients = ({ ingredients }) => {
-	const [currentTab, setCurrentTab] = useState('bun');
-	const [selectedIngredient, setSelectedIngredient] = useState(null);
+export const BurgerIngredients = () => {
+	const dispatch = useDispatch();
 
-	// Handler for ingredient click
+	// Get ingredients from Redux store instead of props
+	const { items: ingredients } = useSelector((state) => state.ingredients);
+	// Get current ingredient for modal from Redux store
+	const { currentIngredient } = useSelector((state) => state.ingredientDetails);
+
+	const buns = useMemo(
+		() => ingredients.filter((item) => item.type === 'bun'),
+		[ingredients]
+	);
+
+	const mains = useMemo(
+		() => ingredients.filter((item) => item.type === 'main'),
+		[ingredients]
+	);
+
+	const sauces = useMemo(
+		() => ingredients.filter((item) => item.type === 'sauce'),
+		[ingredients]
+	);
+
+	// Opening the modal - dispatch action to Redux
 	const handleIngredientClick = (ingredient) => {
-		setSelectedIngredient(ingredient);
+		dispatch(setCurrentIngredient(ingredient));
 	};
 
-	// Handler for closing the modal
+	// Closing the modal - dispatch action to Redux
 	const handleCloseModal = () => {
-		setSelectedIngredient(null);
+		dispatch(clearCurrentIngredient());
 	};
 
 	const titleBunRef = useRef(null);
 	const titleMainRef = useRef(null);
 	const titleSauceRef = useRef(null);
-
-	const buns = ingredients.filter((item) => item.type === 'bun');
-	const mains = ingredients.filter((item) => item.type === 'main');
-	const sauces = ingredients.filter((item) => item.type === 'sauce');
 
 	const [bunsRef, inViewBuns] = useInView({
 		threshold: 0,
@@ -42,19 +62,15 @@ export const BurgerIngredients = ({ ingredients }) => {
 		threshold: 0,
 	});
 
-	useEffect(() => {
-		if (inViewBuns) {
-			setCurrentTab('bun');
-		} else if (inViewMains) {
-			setCurrentTab('main');
-		} else if (inViewSauces) {
-			setCurrentTab('sauce');
-		}
-	}, [inViewBuns, inViewMains, inViewSauces]);
+	const currentTab = inViewBuns
+		? 'bun'
+		: inViewMains
+			? 'main'
+			: inViewSauces
+				? 'sauce'
+				: 'bun';
 
 	const handleTabClick = (value) => {
-		setCurrentTab(value);
-
 		if (value === 'bun') {
 			titleBunRef.current?.scrollIntoView({ behavior: 'smooth' });
 		} else if (value === 'main') {
@@ -68,24 +84,30 @@ export const BurgerIngredients = ({ ingredients }) => {
 		<section className={styles.burger_ingredients}>
 			<nav>
 				<ul className={styles.menu}>
-					<Tab
-						value='bun'
-						active={currentTab === 'bun'}
-						onClick={handleTabClick}>
-						Булки
-					</Tab>
-					<Tab
-						value='main'
-						active={currentTab === 'main'}
-						onClick={handleTabClick}>
-						Начинки
-					</Tab>
-					<Tab
-						value='sauce'
-						active={currentTab === 'sauce'}
-						onClick={handleTabClick}>
-						Соусы
-					</Tab>
+					<li>
+						<Tab
+							value='bun'
+							active={currentTab === 'bun'}
+							onClick={handleTabClick}>
+							Булки
+						</Tab>
+					</li>
+					<li>
+						<Tab
+							value='main'
+							active={currentTab === 'main'}
+							onClick={handleTabClick}>
+							Начинки
+						</Tab>
+					</li>
+					<li>
+						<Tab
+							value='sauce'
+							active={currentTab === 'sauce'}
+							onClick={handleTabClick}>
+							Соусы
+						</Tab>
+					</li>
 				</ul>
 			</nav>
 
@@ -117,10 +139,11 @@ export const BurgerIngredients = ({ ingredients }) => {
 					/>
 				</div>
 			</div>
-			{/* Modal */}
-			{selectedIngredient && (
+
+			{/* Modal - now controlled by Redux state */}
+			{currentIngredient && (
 				<Modal title='Детали ингредиента' onClose={handleCloseModal}>
-					<IngredientDetails ingredient={selectedIngredient} />
+					<IngredientDetails ingredient={currentIngredient} />
 				</Modal>
 			)}
 		</section>
@@ -128,5 +151,5 @@ export const BurgerIngredients = ({ ingredients }) => {
 };
 
 BurgerIngredients.propTypes = {
-	ingredients: PropTypes.arrayOf(ingredientPropType.isRequired).isRequired,
+	ingredients: PropTypes.arrayOf(ingredientPropType.isRequired),
 };
