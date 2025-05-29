@@ -70,10 +70,6 @@ export const FillingItem = ({ filling, index, moveCard, isDraggable }) => {
 			// Time to actually perform the action
 			moveCard(dragIndex, hoverIndex);
 
-			// Note: we're mutating the monitor item here!
-			// Generally it's better to avoid mutations,
-			// but it's good here for the sake of performance
-			// to avoid expensive index searches.
 			item.index = hoverIndex;
 		},
 	});
@@ -90,7 +86,7 @@ export const FillingItem = ({ filling, index, moveCard, isDraggable }) => {
 		<li
 			ref={ref}
 			className={`${styles.filling_item} ${isDragging ? styles.filling_item_dragging : ''}`}
-			style={{ opacity: isDragging ? 0.5 : 1 }}>
+			style={{ opacity: isDragging ? 0 : 1 }}>
 			<div className={styles.drag_handle}>
 				{isDraggable && <DragIcon type='primary' />}
 			</div>

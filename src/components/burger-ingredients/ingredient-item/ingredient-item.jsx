@@ -11,16 +11,15 @@ import {
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
 export const IngredientItem = ({ ingredient, onClick }) => {
-	// Get constructor state from Redux to calculate ingredient count
 	const { bun, ingredients } = useSelector((state) => state.burgerConstructor);
 
-	// Calculate how many times this ingredient is used in constructor
+	// all ingredients used
 	const count = useMemo(() => {
 		if (ingredient.type === 'bun') {
-			// Bun is used twice (top and bottom) if selected
+			// Buns
 			return bun && bun._id === ingredient._id ? 2 : 0;
 		} else {
-			// Count how many times this ingredient appears in constructor
+			// Count ingredient occurrences
 			return ingredients.filter((item) => item._id === ingredient._id).length;
 		}
 	}, [ingredient, bun, ingredients]);

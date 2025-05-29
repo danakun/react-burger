@@ -15,10 +15,8 @@ import {
 
 export const BurgerIngredients = () => {
 	const dispatch = useDispatch();
-
-	// Get ingredients from Redux store instead of props
+	// Add redux
 	const { items: ingredients } = useSelector((state) => state.ingredients);
-	// Get current ingredient for modal from Redux store
 	const { currentIngredient } = useSelector((state) => state.ingredientDetails);
 
 	const buns = useMemo(
@@ -36,12 +34,11 @@ export const BurgerIngredients = () => {
 		[ingredients]
 	);
 
-	// Opening the modal - dispatch action to Redux
+	// dispatch action to Redux on open/close
 	const handleIngredientClick = (ingredient) => {
 		dispatch(setCurrentIngredient(ingredient));
 	};
 
-	// Closing the modal - dispatch action to Redux
 	const handleCloseModal = () => {
 		dispatch(clearCurrentIngredient());
 	};
@@ -140,7 +137,6 @@ export const BurgerIngredients = () => {
 				</div>
 			</div>
 
-			{/* Modal - now controlled by Redux state */}
 			{currentIngredient && (
 				<Modal title='Детали ингредиента' onClose={handleCloseModal}>
 					<IngredientDetails ingredient={currentIngredient} />

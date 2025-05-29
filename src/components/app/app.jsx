@@ -5,7 +5,6 @@ import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredi
 import { BurgerConstructor } from '@components/burger-contructor/burger-constructor.jsx';
 import { AppHeader } from '@components/app-header/app-header.jsx';
 import { Preloader } from '@components/preloader/preloader.jsx';
-// import { INGREDIENTS_ENDPOINT } from '@utils/constants.js';
 import { fetchIngredients } from '../../services/ingredientsSlice';
 
 export const App = () => {
@@ -33,7 +32,6 @@ export const App = () => {
 					</p>
 				) : (
 					<>
-						{/* No props needed - components get data from Redux */}
 						<BurgerIngredients />
 						<BurgerConstructor />
 					</>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { string, bool } from 'prop-types';
+import { bool, number } from 'prop-types';
 // import { useSelector } from 'react-redux';
 import doneIcon from '../../../assets/images/done.svg';
 import { Preloader } from '@components/preloader/preloader.jsx';
@@ -52,7 +52,7 @@ export const OrderDetails = ({ orderNumber, isLoading, hasError }) => {
 };
 
 OrderDetails.propTypes = {
-	orderNumber: string,
+	orderNumber: number.isRequired,
 	isLoading: bool,
 	hasError: bool,
 };
