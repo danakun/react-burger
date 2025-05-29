@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { ORDER_ENDPOINT } from '../utils/constants';
 
 export const createOrder = createAsyncThunk(
 	'order/createOrder',
 	async (ingredientIds, { rejectWithValue }) => {
 		try {
-			// Replace with your actual order endpoint
-			const response = await fetch('YOUR_ORDER_ENDPOINT', {
+			const response = await fetch(ORDER_ENDPOINT, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -18,6 +18,11 @@ export const createOrder = createAsyncThunk(
 			}
 
 			const result = await response.json();
+
+			if (!result.success) {
+				throw new Error('Order creation failed');
+			}
+
 			return result;
 		} catch (error) {
 			return rejectWithValue(error.message);

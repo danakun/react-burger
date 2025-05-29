@@ -11,3 +11,8 @@
 	align-items: center;
 	cursor: grab;
 }
+
+.filling_item_dragging {
+	cursor: move;
+	opacity: 0.5;
+}

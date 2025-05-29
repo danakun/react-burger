@@ -20,13 +20,13 @@ const constructorSlice = createSlice({
 			prepare: (ingredient) => ({
 				payload: {
 					...ingredient,
-					constructorId: crypto.randomUUID(),
+					ingredientId: crypto.randomUUID(),
 				},
 			}),
 		},
 		removeIngredient: (state, action) => {
 			state.ingredients = state.ingredients.filter(
-				(item) => item.constructorId !== action.payload
+				(item) => item.ingredientId !== action.payload
 			);
 		},
 		moveIngredient: (state, action) => {

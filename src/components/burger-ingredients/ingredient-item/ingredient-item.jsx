@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useDrag } from 'react-dnd';
+import { DND_TYPES } from '../../../utils/constants.js';
 import styles from './ingredient-item.module.css';
 import * as PropTypes from 'prop-types';
 import { ingredientPropType } from '@utils/prop-types.js';
@@ -23,6 +25,15 @@ export const IngredientItem = ({ ingredient, onClick }) => {
 		}
 	}, [ingredient, bun, ingredients]);
 
+	// Setup drag
+	const [{ isDragging }, dragRef] = useDrag({
+		type: DND_TYPES.INGREDIENT,
+		item: { ingredient },
+		collect: (monitor) => ({
+			isDragging: monitor.isDragging(),
+		}),
+	});
+
 	const handleKeyDown = (e) => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			onClick();
@@ -32,10 +43,14 @@ export const IngredientItem = ({ ingredient, onClick }) => {
 	return (
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 		<li
-			className={`${styles.ingredient} pt-6 pb-8 pl-4 pr-4`}
+			ref={dragRef}
+			className={`${styles.ingredient} pt-6 pb-8 pl-4 pr-4 ${
+				isDragging ? styles.ingredient_dragging : ''
+			}`}
 			onClick={onClick}
-			onKeyDown={handleKeyDown}>
-			{/* Show counter only if ingredient is used in constructor */}
+			onKeyDown={handleKeyDown}
+			style={{ opacity: isDragging ? 0.5 : 1 }}>
+			{/* Show counter */}
 			{count > 0 && <Counter count={count} size='default' extraClass='m-1' />}
 			<img
 				src={ingredient.image}
