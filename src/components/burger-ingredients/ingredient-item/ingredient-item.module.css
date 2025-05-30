@@ -19,6 +19,11 @@
 	object-fit: contain;
 }
 
+.ingredient_dragging {
+	cursor: move;
+	opacity: 0.5;
+}
+
 .ingredient__price_container {
 	display: flex;
 	align-items: center;

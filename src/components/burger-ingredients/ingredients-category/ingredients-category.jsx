@@ -21,7 +21,6 @@ export const IngredientsCategory = ({
 					<IngredientItem
 						key={ingredient._id}
 						ingredient={ingredient}
-						count={0}
 						onClick={() => onIngredientClick(ingredient)}
 					/>
 				))}
