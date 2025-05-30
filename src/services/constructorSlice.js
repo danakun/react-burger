@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { nanoid } from 'nanoid';
 
 const initialState = {
 	bun: null,
@@ -20,7 +21,7 @@ const constructorSlice = createSlice({
 			prepare: (ingredient) => ({
 				payload: {
 					...ingredient,
-					ingredientId: crypto.randomUUID(),
+					ingredientId: nanoid(),
 				},
 			}),
 		},
