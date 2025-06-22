@@ -19,20 +19,13 @@ export const BurgerIngredients = () => {
 	const { items: ingredients } = useSelector((state) => state.ingredients);
 	const { currentIngredient } = useSelector((state) => state.ingredientDetails);
 
-	const buns = useMemo(
-		() => ingredients.filter((item) => item.type === 'bun'),
-		[ingredients]
-	);
-
-	const mains = useMemo(
-		() => ingredients.filter((item) => item.type === 'main'),
-		[ingredients]
-	);
-
-	const sauces = useMemo(
-		() => ingredients.filter((item) => item.type === 'sauce'),
-		[ingredients]
-	);
+	const { buns, mains, sauces } = useMemo(() => {
+		return {
+			buns: ingredients.filter((item) => item.type === 'bun'),
+			mains: ingredients.filter((item) => item.type === 'main'),
+			sauces: ingredients.filter((item) => item.type === 'sauce'),
+		};
+	}, [ingredients]);
 
 	// dispatch action to Redux on open/close
 	const handleIngredientClick = (ingredient) => {
@@ -59,13 +52,14 @@ export const BurgerIngredients = () => {
 		threshold: 0,
 	});
 
-	const currentTab = inViewBuns
-		? 'bun'
-		: inViewMains
-			? 'main'
-			: inViewSauces
-				? 'sauce'
-				: 'bun';
+	let currentTab = 'bun';
+	if (inViewBuns) {
+		currentTab = 'bun';
+	} else if (inViewMains) {
+		currentTab = 'main';
+	} else if (inViewSauces) {
+		currentTab = 'sauce';
+	}
 
 	const handleTabClick = (value) => {
 		if (value === 'bun') {

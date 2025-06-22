@@ -38,7 +38,7 @@ export const BurgerConstructor = () => {
 	const [{ canDrop, isOver, draggedItemType }, dropRef] = useDrop({
 		accept: DND_TYPES.INGREDIENT,
 		drop: (draggedItem) => {
-			// More explicit destructuring and validation
+			// explicit destructuring and validation
 			const { ingredient } = draggedItem;
 			if (ingredient) {
 				dispatch(addIngredient(ingredient));
@@ -128,19 +128,13 @@ export const BurgerConstructor = () => {
 		[showFillingDropIndicator]
 	);
 
-	const getBunDropZoneText = useCallback(
-		(defaultText, dropText) => {
-			return showBunDropIndicator ? dropText : defaultText;
-		},
-		[showBunDropIndicator]
-	);
+	const getBunDropZoneText = (defaultText, dropText) => {
+		return showBunDropIndicator ? dropText : defaultText;
+	};
 
-	const getFillingDropZoneText = useCallback(
-		(defaultText, dropText) => {
-			return showFillingDropIndicator ? dropText : defaultText;
-		},
-		[showFillingDropIndicator]
-	);
+	const getFillingDropZoneText = (defaultText, dropText) => {
+		return showFillingDropIndicator ? dropText : defaultText;
+	};
 
 	return (
 		<section className={styles.burger_constructor}>
