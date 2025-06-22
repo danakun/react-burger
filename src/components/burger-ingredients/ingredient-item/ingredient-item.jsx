@@ -1,4 +1,7 @@
-import React from 'react';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { useDrag } from 'react-dnd';
+import { DND_TYPES } from '../../../utils/constants.js';
 import styles from './ingredient-item.module.css';
 import * as PropTypes from 'prop-types';
 import { ingredientPropType } from '@utils/prop-types.js';
@@ -8,6 +11,28 @@ import {
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
 export const IngredientItem = ({ ingredient, onClick }) => {
+	const { bun, ingredients } = useSelector((state) => state.burgerConstructor);
+
+	// all ingredients used
+	const count = useMemo(() => {
+		if (ingredient.type === 'bun') {
+			// Buns
+			return bun && bun._id === ingredient._id ? 2 : 0;
+		} else {
+			// Count ingredient occurrences
+			return ingredients.filter((item) => item._id === ingredient._id).length;
+		}
+	}, [ingredient, bun, ingredients]);
+
+	// Setup drag
+	const [{ isDragging }, dragRef] = useDrag({
+		type: DND_TYPES.INGREDIENT,
+		item: { ingredient },
+		collect: (monitor) => ({
+			isDragging: monitor.isDragging(),
+		}),
+	});
+
 	const handleKeyDown = (e) => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			onClick();
@@ -17,10 +42,15 @@ export const IngredientItem = ({ ingredient, onClick }) => {
 	return (
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 		<li
-			className={`${styles.ingredient} pt-6 pb-8 pl-4 pr-4`}
+			ref={dragRef}
+			className={`${styles.ingredient} pt-6 pb-8 pl-4 pr-4 ${
+				isDragging ? styles.ingredient_dragging : ''
+			}`}
 			onClick={onClick}
-			onKeyDown={handleKeyDown}>
-			<Counter count={1} size='default' extraClass='m-1' />
+			onKeyDown={handleKeyDown}
+			style={{ opacity: isDragging ? 0.5 : 1 }}>
+			{/* Show counter */}
+			{count > 0 && <Counter count={count} size='default' extraClass='m-1' />}
 			<img
 				src={ingredient.image}
 				alt={ingredient.name}
@@ -41,6 +71,5 @@ export const IngredientItem = ({ ingredient, onClick }) => {
 
 IngredientItem.propTypes = {
 	ingredient: ingredientPropType.isRequired,
-	count: PropTypes.number,
 	onClick: PropTypes.func.isRequired,
 };
