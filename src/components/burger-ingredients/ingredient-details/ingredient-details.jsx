@@ -1,10 +1,29 @@
 import React, { useState } from 'react';
-import { ingredientPropType } from '@utils/prop-types.js';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styles from './ingredient-details.module.css';
 import { Preloader } from '@components/preloader/preloader.jsx';
 
-export const IngredientDetails = ({ ingredient }) => {
+export const IngredientDetails = () => {
+	const { ingredientId } = useParams();
 	const [imageLoaded, setImageLoaded] = useState(false);
+
+	// Get ingredient from Redux store by ID
+	const ingredient = useSelector((state) =>
+		state.ingredients.items.find((item) => item._id === ingredientId)
+	);
+
+	// Show preloader while ingredient is loading
+	if (!ingredient) {
+		return (
+			<div className={styles.container}>
+				<div className={styles.preloaderWrapper}>
+					<Preloader />
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className={styles.container}>
 			{!imageLoaded && (
@@ -62,8 +81,4 @@ export const IngredientDetails = ({ ingredient }) => {
 			</ul>
 		</div>
 	);
-};
-
-IngredientDetails.propTypes = {
-	ingredient: ingredientPropType.isRequired,
 };

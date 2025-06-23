@@ -1,23 +1,15 @@
 import React, { useRef, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styles from './burger-ingredients.module.css';
 import * as PropTypes from 'prop-types';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import { ingredientPropType } from '@utils/prop-types.js';
 import { IngredientsCategory } from './ingredients-category/ingredients-category';
-import { Modal } from '../modal/modal';
-import { IngredientDetails } from './ingredient-details/ingredient-details';
-import {
-	setCurrentIngredient,
-	clearCurrentIngredient,
-} from '../../services/ingredientDetailsSlice';
 
 export const BurgerIngredients = () => {
-	const dispatch = useDispatch();
 	// Add redux
 	const { items: ingredients } = useSelector((state) => state.ingredients);
-	const { currentIngredient } = useSelector((state) => state.ingredientDetails);
 
 	const { buns, mains, sauces } = useMemo(() => {
 		return {
@@ -26,15 +18,6 @@ export const BurgerIngredients = () => {
 			sauces: ingredients.filter((item) => item.type === 'sauce'),
 		};
 	}, [ingredients]);
-
-	// dispatch action to Redux on open/close
-	const handleIngredientClick = (ingredient) => {
-		dispatch(setCurrentIngredient(ingredient));
-	};
-
-	const handleCloseModal = () => {
-		dispatch(clearCurrentIngredient());
-	};
 
 	const titleBunRef = useRef(null);
 	const titleMainRef = useRef(null);
@@ -108,7 +91,6 @@ export const BurgerIngredients = () => {
 						title='Булки'
 						ingredients={buns}
 						titleRef={titleBunRef}
-						onIngredientClick={handleIngredientClick}
 					/>
 				</div>
 
@@ -117,7 +99,6 @@ export const BurgerIngredients = () => {
 						title='Начинки'
 						ingredients={mains}
 						titleRef={titleMainRef}
-						onIngredientClick={handleIngredientClick}
 					/>
 				</div>
 
@@ -126,16 +107,9 @@ export const BurgerIngredients = () => {
 						title='Соусы'
 						ingredients={sauces}
 						titleRef={titleSauceRef}
-						onIngredientClick={handleIngredientClick}
 					/>
 				</div>
 			</div>
-
-			{currentIngredient && (
-				<Modal title='Детали ингредиента' onClose={handleCloseModal}>
-					<IngredientDetails ingredient={currentIngredient} />
-				</Modal>
-			)}
 		</section>
 	);
 };

@@ -1,13 +1,24 @@
 import React, { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppHeader } from '@components/app-header/app-header.jsx';
 import { fetchIngredients } from '../../services/ingredientsSlice';
 import { Home } from '../../pages/home/home';
+// import { NotFound } from '../../pages/not-found/not-found';
+import { IngredientPage as IngredientDetails } from '../../pages/ingredient/ingredient-page';
+import { Modal } from '../modal/modal';
 // import styles from './app.module.css';
 
 export const App = () => {
 	const dispatch = useDispatch();
+	const location = useLocation();
+	const navigate = useNavigate();
+	const background = location.state && location.state.background;
+
+	const handleModalClose = () => {
+		// Возвращаемся к предыдущему пути при закрытии модалки
+		navigate(-1);
+	};
 
 	useEffect(() => {
 		dispatch(fetchIngredients());
@@ -16,9 +27,27 @@ export const App = () => {
 	return (
 		<>
 			<AppHeader />
-			<Routes>
+			<Routes location={background || location}>
 				<Route path='/' element={<Home />} />
+				<Route
+					path='/ingredients/:ingredientId'
+					element={<IngredientDetails />}
+				/>
+				{/* <Route path='*' element={<NotFound />} /> */}
 			</Routes>
+
+			{background && (
+				<Routes>
+					<Route
+						path='/ingredients/:ingredientId'
+						element={
+							<Modal onClose={handleModalClose}>
+								<IngredientDetails />
+							</Modal>
+						}
+					/>
+				</Routes>
+			)}
 		</>
 	);
 };
