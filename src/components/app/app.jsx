@@ -8,7 +8,8 @@ import { Login } from '../../pages/login/login';
 import { Register } from '../../pages/register/register';
 import { ForgotPassword } from '../../pages/forgot-password/forgot-password';
 import { ResetPassword } from '../../pages/reset-password/reset-password';
-// import { NotFound } from '../../pages/not-found/not-found';
+import { Profile } from '../../pages/profile/profile';
+import { NotFound } from '../../pages/not-found/not-found';
 import { IngredientPage as IngredientDetails } from '../../pages/ingredient/ingredient-page';
 import { Modal } from '../modal/modal';
 // import styles from './app.module.css';
@@ -37,11 +38,12 @@ export const App = () => {
 				<Route path='/register' element={<Register />} />
 				<Route path='/forgot-password' element={<ForgotPassword />} />
 				<Route path='/reset-password' element={<ResetPassword />} />
+				<Route path='/profile' element={<Profile />} />
 				<Route
 					path='/ingredients/:ingredientId'
 					element={<IngredientDetails />}
 				/>
-				{/* <Route path='*' element={<NotFound />} /> */}
+				<Route path='*' element={<NotFound />} />
 			</Routes>
 
 			{background && (

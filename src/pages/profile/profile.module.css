@@ -1,0 +1,113 @@
+.container {
+	display: flex;
+	gap: 120px;
+	max-width: 1240px;
+	min-height: calc(100vh - 88px);
+	margin: 0 auto;
+	padding: 120px 40px 40px;
+}
+
+.sidebar {
+	flex-shrink: 0;
+	width: 320px;
+}
+
+.navigation {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.navLink {
+	padding: 0;
+	text-align: left;
+	text-decoration: none;
+	background: none;
+	border: none;
+	cursor: pointer;
+	transition: color 0.3s ease;
+}
+
+.navLinkActive {
+	color: #f2f2f3 !important;
+}
+
+.logoutButton {
+	margin-top: 20px;
+}
+
+.logoutButton:hover {
+	color: #8585ff !important;
+}
+
+.description {
+	max-width: 280px;
+	opacity: 0.6;
+}
+
+.content {
+	flex: 1;
+	max-width: 600px;
+}
+
+.form {
+	width: 100%;
+	max-width: 480px;
+}
+
+.input_wrapper {
+	width: 100%;
+}
+
+.buttons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 32px;
+	margin-top: 48px;
+}
+
+.buttons button {
+	min-width: 128px;
+}
+
+/* Адаптивность */
+
+@media (width <= 1024px) {
+	.container {
+		gap: 60px;
+		padding: 80px 20px 40px;
+	}
+
+	.sidebar {
+		width: 280px;
+	}
+}
+
+@media (width <= 768px) {
+	.container {
+		flex-direction: column;
+		gap: 40px;
+		padding: 60px 15px 40px;
+	}
+
+	.sidebar {
+		width: 100%;
+	}
+
+	.navigation {
+		flex-flow: row wrap;
+		justify-content: space-between;
+		gap: 16px;
+	}
+
+	.description {
+		max-width: none;
+		margin-top: 20px;
+	}
+
+	.buttons {
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 16px;
+	}
+}
