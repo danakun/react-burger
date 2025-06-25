@@ -16,7 +16,7 @@ export const NotFound = () => {
 					Возможно вы ввели неверный космический адрес
 				</p>
 				<Link to='/' className={styles.linkButton}>
-					<Button type='primary' size='medium'>
+					<Button type='primary' size='medium' htmlType='button'>
 						На главную
 					</Button>
 				</Link>

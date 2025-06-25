@@ -15,6 +15,12 @@ import { OrderDetails } from '../../pages/profile/order-details/order-details';
 import { NotFound } from '../../pages/not-found/not-found';
 import { IngredientPage as IngredientDetails } from '../../pages/ingredient/ingredient-page';
 import { Modal } from '../modal/modal';
+import {
+	OnlyUnAuth,
+	OnlyAuth,
+	ResetPasswordProtected,
+} from '../protected-route/protected-route';
+import { checkUserAuth } from '../../services/actions';
 
 export const App = () => {
 	const dispatch = useDispatch();
@@ -29,6 +35,7 @@ export const App = () => {
 
 	useEffect(() => {
 		dispatch(fetchIngredients());
+		dispatch(checkUserAuth());
 	}, [dispatch]);
 
 	return (
@@ -36,13 +43,25 @@ export const App = () => {
 			<AppHeader />
 			<Routes location={background || location}>
 				<Route path='/' element={<Home />} />
-				<Route path='/login' element={<Login />} />
-				<Route path='/register' element={<Register />} />
-				<Route path='/forgot-password' element={<ForgotPassword />} />
-				<Route path='/reset-password' element={<ResetPassword />} />
+
+				<Route path='/login' element={<OnlyUnAuth component={<Login />} />} />
+				<Route
+					path='/register'
+					element={<OnlyUnAuth component={<Register />} />}
+				/>
+				<Route
+					path='/forgot-password'
+					element={<OnlyUnAuth component={<ForgotPassword />} />}
+				/>
+				<Route
+					path='/reset-password'
+					element={<ResetPasswordProtected component={<ResetPassword />} />}
+				/>
 
 				{/* Profile nested routes */}
-				<Route path='/profile' element={<ProfileLayout />}>
+				<Route
+					path='/profile'
+					element={<OnlyAuth component={<ProfileLayout />} />}>
 					<Route index element={<Profile />} />
 					<Route path='orders' element={<ProfileOrders />} />
 					<Route path='orders/:number' element={<OrderDetails />} />

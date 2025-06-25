@@ -13,15 +13,9 @@ export const IngredientDetails = () => {
 		state.ingredients.items.find((item) => item._id === ingredientId)
 	);
 
-	// Show preloader while ingredient is loading
+	// If ingredient not found, show error or nothing
 	if (!ingredient) {
-		return (
-			<div className={styles.container}>
-				<div className={styles.preloaderWrapper}>
-					<Preloader />
-				</div>
-			</div>
-		);
+		return null; // or return a "not found" message
 	}
 
 	return (

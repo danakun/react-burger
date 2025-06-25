@@ -1,13 +1,20 @@
 import React from 'react';
 import { useLocation, Link, Outlet } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { logout } from '../../services/actions';
 import styles from './profile.module.css';
 
 export const ProfileLayout = () => {
 	const location = useLocation();
+	const dispatch = useDispatch();
 
-	// Check which route is currently active
+	// Check which route is active
 	const isProfileActive = location.pathname === '/profile';
 	const isOrdersActive = location.pathname.startsWith('/profile/orders');
+
+	const onLogout = () => {
+		dispatch(logout());
+	};
 
 	return (
 		<div className={styles.container}>
@@ -25,7 +32,7 @@ export const ProfileLayout = () => {
 					</Link>
 					<button
 						className={`${styles.navLink} ${styles.logoutButton} text text_type_main-medium text_color_inactive`}
-						onClick={() => console.log('Logout')}>
+						onClick={onLogout}>
 						Выход
 					</button>
 				</nav>

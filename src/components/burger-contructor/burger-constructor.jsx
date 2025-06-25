@@ -17,9 +17,14 @@ import {
 	clearConstructor,
 } from '../../services/constructorSlice';
 import { DND_TYPES } from '../../utils/constants';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getUserData } from '../../services/userSlice';
 
 export const BurgerConstructor = () => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const location = useLocation();
+	const user = useSelector(getUserData);
 
 	// Get constructor ingredients from Redux state
 	const { bun, ingredients: fillings } = useSelector(
@@ -88,6 +93,13 @@ export const BurgerConstructor = () => {
 	const handleOrderClick = useCallback(async () => {
 		if (!canPlaceOrder) return;
 
+		// Check if user is authenticated
+		if (!user) {
+			// Redirect to login page with current location
+			navigate('/login', { state: { from: location } });
+			return;
+		}
+
 		try {
 			const ingredientIds = [
 				bun._id, // Top bun
@@ -104,7 +116,7 @@ export const BurgerConstructor = () => {
 		} catch (error) {
 			console.error('Failed to create order:', error);
 		}
-	}, [dispatch, bun, fillings, canPlaceOrder]);
+	}, [dispatch, bun, fillings, canPlaceOrder, user, navigate, location]);
 
 	const handleCloseModal = useCallback(() => {
 		dispatch(clearOrder());

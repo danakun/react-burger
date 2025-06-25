@@ -4,7 +4,7 @@ import {
 	Input,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { PASSWORD_RESET_ENDPOINT } from '../../utils/api';
+import { forgotPasswordRequest } from '../../utils/api'; // Use the API function
 import styles from './forgot-password.module.css';
 
 export const ForgotPassword = () => {
@@ -37,32 +37,19 @@ export const ForgotPassword = () => {
 		setError('');
 
 		try {
-			const response = await fetch(PASSWORD_RESET_ENDPOINT, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					email: formData.email,
-				}),
-			});
+			// Use the API function from utils/api.js
+			await forgotPasswordRequest(formData.email);
 
-			const data = await response.json();
+			// Set the localStorage flag for reset password access
+			localStorage.setItem('resetPassword', 'true');
 
-			if (response.ok && data.success) {
-				// Успешно отправили запрос на восстановление
-				console.log('Reset email sent:', data.message);
-				// Перенаправляем на страницу сброса пароля
-				navigate('/reset-password', {
-					state: { fromForgotPassword: true, email: formData.email },
-				});
-			} else {
-				// Обработка ошибки от API
-				setError(data.message || 'Произошла ошибка при отправке запроса');
-			}
+			// Navigate to reset password page
+			navigate('/reset-password', { replace: true });
 		} catch (error) {
 			console.error('Forgot password error:', error);
-			setError('Произошла ошибка. Пожалуйста, попробуйте позже.');
+			setError(
+				error.message || 'Произошла ошибка. Пожалуйста, попробуйте позже.'
+			);
 		} finally {
 			setIsLoading(false);
 		}

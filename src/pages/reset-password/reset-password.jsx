@@ -1,31 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
 	Input,
 	Button,
 	PasswordInput,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { PASSWORD_RESET_CONFIRM_ENDPOINT } from '../../utils/api';
+import { resetPasswordRequest } from '../../utils/api';
 import styles from './reset-password.module.css';
 
 export const ResetPassword = () => {
 	const navigate = useNavigate();
-	const location = useLocation();
 	const [formData, setFormData] = useState({
 		password: '',
 		token: '',
 	});
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
-
-	// Проверяем, пришли ли мы со страницы восстановления пароля
-	const fromForgotPassword = location.state?.fromForgotPassword;
-
-	useEffect(() => {
-		if (!fromForgotPassword) {
-			navigate('/forgot-password');
-		}
-	}, [fromForgotPassword, navigate]);
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -49,35 +39,24 @@ export const ResetPassword = () => {
 		setError('');
 
 		try {
-			const response = await fetch(PASSWORD_RESET_CONFIRM_ENDPOINT, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
+			// Use the API function from utils/api.js
+			await resetPasswordRequest(formData.password, formData.token);
+
+			// Clear the localStorage flag after successful reset
+			localStorage.removeItem('resetPassword');
+
+			// Navigate to login page
+			navigate('/login', {
+				replace: true,
+				state: {
+					message: 'Пароль успешно изменен. Войдите с новым паролем.',
 				},
-				body: JSON.stringify({
-					password: formData.password,
-					token: formData.token,
-				}),
 			});
-
-			const data = await response.json();
-
-			if (response.ok && data.success) {
-				// Успешно сбросили пароль
-				console.log('Password reset successful:', data.message);
-				// Перенаправляем на страницу входа
-				navigate('/login', {
-					state: {
-						message: 'Пароль успешно изменен. Войдите с новым паролем.',
-					},
-				});
-			} else {
-				// Обработка ошибки от API
-				setError(data.message || 'Произошла ошибка при сбросе пароля');
-			}
 		} catch (error) {
 			console.error('Reset password error:', error);
-			setError('Произошла ошибка. Пожалуйста, попробуйте позже.');
+			setError(
+				error.message || 'Произошла ошибка. Пожалуйста, попробуйте позже.'
+			);
 		} finally {
 			setIsLoading(false);
 		}
