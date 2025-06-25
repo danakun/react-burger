@@ -1,9 +1,8 @@
-// Base URL
 import { API_BASE_URL } from './constants';
 
+// Endpoints
 export const INGREDIENTS_ENDPOINT = `${API_BASE_URL}/api/ingredients`;
 export const ORDER_ENDPOINT = `${API_BASE_URL}/api/orders`;
-
 export const PASSWORD_RESET_ENDPOINT = `${API_BASE_URL}/api/password-reset`;
 export const PASSWORD_RESET_CONFIRM_ENDPOINT = `${API_BASE_URL}/api/password-reset/reset`;
 export const AUTH_REGISTER_ENDPOINT = `${API_BASE_URL}/api/auth/register`;
@@ -17,9 +16,14 @@ export const checkResponse = (res) => {
 	return res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
 };
 
+// Универсальная функция запроса
+function request(url, options) {
+	return fetch(url, options).then(checkResponse);
+}
+
 // Функция для обновления токена
 export const refreshToken = () => {
-	return fetch(AUTH_TOKEN_ENDPOINT, {
+	return request(AUTH_TOKEN_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -27,29 +31,25 @@ export const refreshToken = () => {
 		body: JSON.stringify({
 			token: localStorage.getItem('refreshToken'),
 		}),
-	})
-		.then(checkResponse)
-		.then((refreshData) => {
-			if (!refreshData.success) {
-				return Promise.reject(refreshData);
-			}
-			localStorage.setItem('refreshToken', refreshData.refreshToken);
-			localStorage.setItem('accessToken', refreshData.accessToken);
-			return refreshData;
-		});
+	}).then((refreshData) => {
+		if (!refreshData.success) {
+			return Promise.reject(refreshData);
+		}
+		localStorage.setItem('refreshToken', refreshData.refreshToken);
+		localStorage.setItem('accessToken', refreshData.accessToken);
+		return refreshData;
+	});
 };
 
 // Функция для запроса с обновлением токена
 export const fetchWithRefresh = async (url, options) => {
 	try {
-		const res = await fetch(url, options);
-		return await checkResponse(res);
+		return await request(url, options);
 	} catch (err) {
 		if (err.message === 'jwt expired') {
 			const refreshData = await refreshToken();
 			options.headers.authorization = refreshData.accessToken;
-			const res = await fetch(url, options);
-			return await checkResponse(res);
+			return await request(url, options);
 		} else {
 			return Promise.reject(err);
 		}
@@ -58,7 +58,7 @@ export const fetchWithRefresh = async (url, options) => {
 
 // API функции для аутентификации
 export const registerRequest = (email, password, name) => {
-	return fetch(AUTH_REGISTER_ENDPOINT, {
+	return request(AUTH_REGISTER_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -68,11 +68,11 @@ export const registerRequest = (email, password, name) => {
 			password,
 			name,
 		}),
-	}).then(checkResponse);
+	});
 };
 
 export const loginRequest = (email, password) => {
-	return fetch(AUTH_LOGIN_ENDPOINT, {
+	return request(AUTH_LOGIN_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -81,11 +81,11 @@ export const loginRequest = (email, password) => {
 			email,
 			password,
 		}),
-	}).then(checkResponse);
+	});
 };
 
 export const logoutRequest = () => {
-	return fetch(AUTH_LOGOUT_ENDPOINT, {
+	return request(AUTH_LOGOUT_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -93,7 +93,7 @@ export const logoutRequest = () => {
 		body: JSON.stringify({
 			token: localStorage.getItem('refreshToken'),
 		}),
-	}).then(checkResponse);
+	});
 };
 
 export const getUserRequest = () => {
@@ -123,23 +123,23 @@ export const updateUserRequest = (name, email, password) => {
 
 // Password reset API functions (no Redux needed)
 export const forgotPasswordRequest = (email) => {
-	return fetch(PASSWORD_RESET_ENDPOINT, {
+	return request(PASSWORD_RESET_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
 		},
 		body: JSON.stringify({ email }),
-	}).then(checkResponse);
+	});
 };
 
 export const resetPasswordRequest = (password, token) => {
-	return fetch(PASSWORD_RESET_CONFIRM_ENDPOINT, {
+	return request(PASSWORD_RESET_CONFIRM_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
 		},
 		body: JSON.stringify({ password, token }),
-	}).then(checkResponse);
+	});
 };
 
 export const createOrderRequest = (ingredients) => {
@@ -150,5 +150,15 @@ export const createOrderRequest = (ingredients) => {
 			authorization: localStorage.getItem('accessToken'),
 		},
 		body: JSON.stringify({ ingredients }),
+	});
+};
+
+// Ingredients API function
+export const getIngredientsRequest = () => {
+	return request(INGREDIENTS_ENDPOINT, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json;charset=utf-8',
+		},
 	});
 };
