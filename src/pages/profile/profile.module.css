@@ -32,10 +32,6 @@
 	color: #f2f2f3 !important;
 }
 
-.logoutButton {
-	margin-top: 20px;
-}
-
 .logoutButton:hover {
 	color: #8585ff !important;
 }
