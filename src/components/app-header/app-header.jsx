@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import styles from './app-header.module.css';
 import {
 	BurgerIcon,
@@ -41,9 +41,11 @@ export const AppHeader = () => {
 					</NavLink>
 				</div>
 
-				<div className={styles.logo}>
-					<Logo />
-				</div>
+				<Link to='/'>
+					<div className={styles.logo}>
+						<Logo />
+					</div>
+				</Link>
 
 				<NavLink
 					to='/profile'

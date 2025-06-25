@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { ORDER_ENDPOINT } from '../utils/constants';
-import { fetchWithRefresh } from '../utils/api';
+import { ORDER_ENDPOINT, fetchWithRefresh } from '../utils/api';
 
 export const createOrder = createAsyncThunk(
 	'order/createOrder',

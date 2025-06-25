@@ -1,8 +1,8 @@
 // Base URL
-export const API_BASE_URL = 'https://norma.nomoreparties.space';
+import { API_BASE_URL } from './constants';
 
 export const INGREDIENTS_ENDPOINT = `${API_BASE_URL}/api/ingredients`;
-export const ORDER_ENDPOINT = 'https://norma.nomoreparties.space/api/orders';
+export const ORDER_ENDPOINT = `${API_BASE_URL}/api/orders`;
 
 export const PASSWORD_RESET_ENDPOINT = `${API_BASE_URL}/api/password-reset`;
 export const PASSWORD_RESET_CONFIRM_ENDPOINT = `${API_BASE_URL}/api/password-reset/reset`;
@@ -13,7 +13,7 @@ export const AUTH_TOKEN_ENDPOINT = `${API_BASE_URL}/api/auth/token`;
 export const AUTH_USER_ENDPOINT = `${API_BASE_URL}/api/auth/user`;
 
 // Функция для обработки ответа
-const checkResponse = (res) => {
+export const checkResponse = (res) => {
 	return res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
 };
 
