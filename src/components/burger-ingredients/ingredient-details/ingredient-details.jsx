@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
-import { ingredientPropType } from '@utils/prop-types.js';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styles from './ingredient-details.module.css';
 import { Preloader } from '@components/preloader/preloader.jsx';
 
-export const IngredientDetails = ({ ingredient }) => {
+export const IngredientDetails = () => {
+	const { ingredientId } = useParams();
 	const [imageLoaded, setImageLoaded] = useState(false);
+
+	// Get ingredient from Redux store by ID
+	const ingredient = useSelector((state) =>
+		state.ingredients.items.find((item) => item._id === ingredientId)
+	);
+
+	// If ingredient not found, show error or nothing
+	if (!ingredient) {
+		return null; // or return a "not found" message
+	}
+
 	return (
 		<div className={styles.container}>
 			{!imageLoaded && (
@@ -62,8 +75,4 @@ export const IngredientDetails = ({ ingredient }) => {
 			</ul>
 		</div>
 	);
-};
-
-IngredientDetails.propTypes = {
-	ingredient: ingredientPropType.isRequired,
 };

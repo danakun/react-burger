@@ -62,6 +62,7 @@
 		"jsdom": "^26.0.0",
 		"lint-staged": "^15.5.1",
 		"prettier": "^3.5.3",
+		"react-router-dom": "^7.6.2",
 		"stylelint": "^16.16.0",
 		"stylelint-config-standard": "^37.0.0",
 		"stylelint-order": "^6.0.4",

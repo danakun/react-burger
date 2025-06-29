@@ -1,15 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { INGREDIENTS_ENDPOINT } from '../utils/constants.js';
+import { checkResponse } from '../utils/api.js';
 
 export const fetchIngredients = createAsyncThunk(
 	'ingredients/fetchIngredients',
 	async (_, { rejectWithValue }) => {
 		try {
 			const response = await fetch(INGREDIENTS_ENDPOINT);
-			if (!response.ok) {
-				throw new Error(`Failed with status: ${response.status}`);
-			}
-			const result = await response.json();
+			const result = await checkResponse(response);
 			return result.data || [];
 		} catch (error) {
 			return rejectWithValue(error.message);

@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useDrag } from 'react-dnd';
 import { DND_TYPES } from '../../../utils/constants.js';
 import styles from './ingredient-item.module.css';
-import * as PropTypes from 'prop-types';
 import { ingredientPropType } from '@utils/prop-types.js';
 import {
 	CurrencyIcon,
 	Counter,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
-export const IngredientItem = ({ ingredient, onClick }) => {
+export const IngredientItem = ({ ingredient }) => {
+	const location = useLocation();
 	const { bun, ingredients } = useSelector((state) => state.burgerConstructor);
 
 	// all ingredients used
@@ -33,12 +34,6 @@ export const IngredientItem = ({ ingredient, onClick }) => {
 		}),
 	});
 
-	const handleKeyDown = (e) => {
-		if (e.key === 'Enter' || e.key === ' ') {
-			onClick();
-		}
-	};
-
 	return (
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 		<li
@@ -46,30 +41,32 @@ export const IngredientItem = ({ ingredient, onClick }) => {
 			className={`${styles.ingredient} pt-6 pb-8 pl-4 pr-4 ${
 				isDragging ? styles.ingredient_dragging : ''
 			}`}
-			onClick={onClick}
-			onKeyDown={handleKeyDown}
 			style={{ opacity: isDragging ? 0.5 : 1 }}>
-			{/* Show counter */}
-			{count > 0 && <Counter count={count} size='default' extraClass='m-1' />}
-			<img
-				src={ingredient.image}
-				alt={ingredient.name}
-				className={`${styles.ingredient__image} mb-1`}
-			/>
-			<div className={`${styles.ingredient__price_container} mb-1`}>
-				<span className='text text_type_digits-default mr-2'>
-					{ingredient.price}
-				</span>
-				<CurrencyIcon type='primary' />
-			</div>
-			<p className={`${styles.ingredient__name} text text_type_main-default`}>
-				{ingredient.name}
-			</p>
+			<Link
+				to={`/ingredients/${ingredient._id}`}
+				state={{ background: location }}
+				className={styles.ingredient_link}>
+				{/* Show counter */}
+				{count > 0 && <Counter count={count} size='default' extraClass='m-1' />}
+				<img
+					src={ingredient.image}
+					alt={ingredient.name}
+					className={`${styles.ingredient__image} mb-1`}
+				/>
+				<div className={`${styles.ingredient__price_container} mb-1`}>
+					<span className='text text_type_digits-default mr-2'>
+						{ingredient.price}
+					</span>
+					<CurrencyIcon type='primary' />
+				</div>
+				<p className={`${styles.ingredient__name} text text_type_main-default`}>
+					{ingredient.name}
+				</p>
+			</Link>
 		</li>
 	);
 };
 
 IngredientItem.propTypes = {
 	ingredient: ingredientPropType.isRequired,
-	onClick: PropTypes.func.isRequired,
 };

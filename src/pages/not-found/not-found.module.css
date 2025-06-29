@@ -1,0 +1,64 @@
+.container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: calc(100vh - 88px);
+	overflow: hidden;
+}
+
+.content {
+	max-width: 600px;
+	max-height: 100%;
+	overflow: hidden;
+	text-align: center;
+}
+
+.digits {
+	margin-bottom: 24px;
+	color: #f2f2f3;
+	font-weight: 600;
+	font-size: min(200px, 25vh);
+	line-height: 0.8;
+	text-shadow: 0 0 30px rgb(76 76 255 / 30%);
+}
+
+.title {
+	margin-bottom: 16px;
+}
+
+.description {
+	max-width: 400px;
+	margin: 0 auto 32px;
+	line-height: 1.5;
+}
+
+.linkButton {
+	display: inline-block;
+	text-decoration: none;
+}
+
+/* Адаптивность */
+
+@media (width <= 768px) {
+	.container {
+		height: calc(100vh - 60px);
+		padding: 15px;
+	}
+
+	.digits {
+		margin-bottom: 20px;
+		font-size: min(120px, 20vh);
+	}
+
+	.description {
+		margin-bottom: 24px;
+		font-size: 14px;
+	}
+}
+
+@media (width <= 480px) {
+	.digits {
+		margin-bottom: 16px;
+		font-size: min(100px, 18vh);
+	}
+}

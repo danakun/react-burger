@@ -1,46 +1,193 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import styles from './app.module.css';
-import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients.jsx';
-import { BurgerConstructor } from '@components/burger-contructor/burger-constructor.jsx';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { AppHeader } from '@components/app-header/app-header.jsx';
-import { Preloader } from '@components/preloader/preloader.jsx';
 import { fetchIngredients } from '../../services/ingredientsSlice';
+import { Home } from '../../pages/home/home';
+import { Login } from '../../pages/login/login';
+import { Register } from '../../pages/register/register';
+import { ForgotPassword } from '../../pages/forgot-password/forgot-password';
+import { ResetPassword } from '../../pages/reset-password/reset-password';
+import { ProfileLayout } from '../../pages/profile/profile-layout';
+import { Profile } from '../../pages/profile/profile';
+import { ProfileOrders } from '../../pages/profile/profile-orders/profile-orders';
+import { OrderDetails } from '../../pages/profile/order-details/order-details';
+import { NotFound } from '../../pages/not-found/not-found';
+import { IngredientPage as IngredientDetails } from '../../pages/ingredient/ingredient-page';
+import { Modal } from '../modal/modal';
+import {
+	OnlyUnAuth,
+	OnlyAuth,
+	ResetPasswordProtected,
+} from '../protected-route/protected-route';
+import { checkUserAuth } from '../../services/actions';
 
 export const App = () => {
 	const dispatch = useDispatch();
-	const { isLoading, hasError } = useSelector((state) => state.ingredients);
+	const location = useLocation();
+	const navigate = useNavigate();
+	const background = location.state && location.state.background;
+
+	const handleModalClose = () => {
+		// go one route back when modal is closed
+		navigate(-1);
+	};
 
 	useEffect(() => {
 		dispatch(fetchIngredients());
+		dispatch(checkUserAuth());
 	}, [dispatch]);
 
 	return (
-		<div className={styles.app}>
+		<>
 			<AppHeader />
-			<h1
-				className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}>
-				Соберите бургер
-			</h1>
-			<main className={`${styles.main} pl-5 pr-5`}>
-				{isLoading ? (
-					<Preloader />
-				) : hasError ? (
-					<p className='text text_type_main-medium text_color_error'>
-						Произошла ошибка при загрузке ингредиентов. Пожалуйста, попробуйте
-						позже.
-					</p>
-				) : (
-					<>
-						<DndProvider backend={HTML5Backend}>
-							<BurgerIngredients />
-							<BurgerConstructor />
-						</DndProvider>
-					</>
-				)}
-			</main>
-		</div>
+			<Routes location={background || location}>
+				<Route path='/' element={<Home />} />
+
+				<Route path='/login' element={<OnlyUnAuth component={<Login />} />} />
+				<Route
+					path='/register'
+					element={<OnlyUnAuth component={<Register />} />}
+				/>
+				<Route
+					path='/forgot-password'
+					element={<OnlyUnAuth component={<ForgotPassword />} />}
+				/>
+				<Route
+					path='/reset-password'
+					element={<ResetPasswordProtected component={<ResetPassword />} />}
+				/>
+
+				{/* Profile nested routes */}
+				<Route
+					path='/profile'
+					element={<OnlyAuth component={<ProfileLayout />} />}>
+					<Route index element={<Profile />} />
+					<Route path='orders' element={<ProfileOrders />} />
+					<Route path='orders/:number' element={<OrderDetails />} />
+				</Route>
+
+				<Route
+					path='/ingredients/:ingredientId'
+					element={<IngredientDetails />}
+				/>
+				<Route path='*' element={<NotFound />} />
+			</Routes>
+
+			{background && (
+				<Routes>
+					<Route
+						path='/ingredients/:ingredientId'
+						element={
+							<Modal onClose={handleModalClose}>
+								<IngredientDetails />
+							</Modal>
+						}
+					/>
+				</Routes>
+			)}
+		</>
 	);
 };
+
+// import React, { useEffect } from 'react';
+// import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { ProtectedRoute } from '@components/protected-route/protected-route.jsx';
+// // import { checkUserAuth } from '../../services/authSlice';
+// import { AppHeader } from '@components/app-header/app-header.jsx';
+// import { fetchIngredients } from '../../services/ingredientsSlice';
+// import { Home } from '../../pages/home/home';
+// import { Login } from '../../pages/login/login';
+// import { Register } from '../../pages/register/register';
+// import { ForgotPassword } from '../../pages/forgot-password/forgot-password';
+// import { ResetPassword } from '../../pages/reset-password/reset-password';
+// import { Profile } from '../../pages/profile/profile';
+// import { NotFound } from '../../pages/not-found/not-found';
+// import { IngredientPage as IngredientDetails } from '../../pages/ingredient/ingredient-page';
+// import { Modal } from '../modal/modal';
+// // import styles from './app.module.css';
+
+// export const App = () => {
+// 	const dispatch = useDispatch();
+// 	const location = useLocation();
+// 	const navigate = useNavigate();
+// 	const background = location.state && location.state.background;
+// 	const { isAuthChecked } = useSelector((state) => state.auth);
+
+// 	const handleModalClose = () => {
+// 		// Возвращаемся к предыдущему пути при закрытии модалки
+// 		navigate(-1);
+// 	};
+
+// 	useEffect(() => {
+// 		dispatch(fetchIngredients());
+// 	}, [dispatch]);
+
+// 	return (
+// 		<>
+// 			<AppHeader />
+// 			<Routes location={background || location}>
+// 				<Route path='/' element={<Home />} />
+// 				<Route
+// 					path='/login'
+// 					element={
+// 						<ProtectedRoute onlyUnAuth={true}>
+// 							<Login />
+// 						</ProtectedRoute>
+// 					}
+// 				/>
+// 				<Route
+// 					path='/register'
+// 					element={
+// 						<ProtectedRoute onlyUnAuth={true}>
+// 							<Register />
+// 						</ProtectedRoute>
+// 					}
+// 				/>
+// 				<Route
+// 					path='/forgot-password'
+// 					element={
+// 						<ProtectedRoute onlyUnAuth={true}>
+// 							<ForgotPassword />
+// 						</ProtectedRoute>
+// 					}
+// 				/>
+// 				<Route
+// 					path='/reset-password'
+// 					element={
+// 						<ProtectedRoute onlyUnAuth={true}>
+// 							<ResetPassword />
+// 						</ProtectedRoute>
+// 					}
+// 				/>
+// 				<Route
+// 					path='/profile'
+// 					element={
+// 						<ProtectedRoute>
+// 							<Profile />
+// 						</ProtectedRoute>
+// 					}
+// 				/>
+// 				<Route
+// 					path='/ingredients/:ingredientId'
+// 					element={<IngredientDetails />}
+// 				/>
+// 				<Route path='*' element={<NotFound />} />
+// 			</Routes>
+
+// 			{background && (
+// 				<Routes>
+// 					<Route
+// 						path='/ingredients/:ingredientId'
+// 						element={
+// 							<Modal onClose={handleModalClose}>
+// 								<IngredientDetails />
+// 							</Modal>
+// 						}
+// 					/>
+// 				</Routes>
+// 			)}
+// 		</>
+// 	);
+// };

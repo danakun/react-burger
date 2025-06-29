@@ -1,27 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { ORDER_ENDPOINT } from '../utils/constants';
+import { ORDER_ENDPOINT, fetchWithRefresh } from '../utils/api';
 
 export const createOrder = createAsyncThunk(
 	'order/createOrder',
 	async (ingredientIds, { rejectWithValue }) => {
 		try {
-			const response = await fetch(ORDER_ENDPOINT, {
+			const result = await fetchWithRefresh(ORDER_ENDPOINT, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
+					'Content-Type': 'application/json;charset=utf-8',
+					authorization: localStorage.getItem('accessToken'),
 				},
 				body: JSON.stringify({ ingredients: ingredientIds }),
 			});
-
-			if (!response.ok) {
-				throw new Error(`Failed with status: ${response.status}`);
-			}
-
-			const result = await response.json();
-
-			if (!result.success) {
-				throw new Error('Order creation failed');
-			}
 
 			return result;
 		} catch (error) {
