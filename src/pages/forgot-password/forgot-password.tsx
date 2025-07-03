@@ -4,28 +4,34 @@ import {
 	Input,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-import { forgotPasswordRequest } from '../../utils/api'; // Use the API function
+import { forgotPasswordRequest } from '../../utils/api';
 import styles from './forgot-password.module.css';
 
-export const ForgotPassword = () => {
+type FormData = {
+	email: string;
+};
+
+export const ForgotPassword = (): React.JSX.Element => {
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<FormData>({
 		email: '',
 	});
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
 
-	const handleInputChange = (e) => {
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({
 			...prev,
 			[name]: value,
 		}));
-		// Очищаем ошибку при изменении поля
+		// clean error
 		if (error) setError('');
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (
+		e: React.FormEvent<HTMLFormElement>
+	): Promise<void> => {
 		e.preventDefault();
 
 		if (!formData.email) {
@@ -37,8 +43,8 @@ export const ForgotPassword = () => {
 		setError('');
 
 		try {
-			// Use the API function from utils/api.js
-			await forgotPasswordRequest(formData.email);
+			// Use the API function
+			await forgotPasswordRequest({ email: formData.email });
 
 			// Set the localStorage flag for reset password access
 			localStorage.setItem('resetPassword', 'true');
@@ -48,7 +54,9 @@ export const ForgotPassword = () => {
 		} catch (error) {
 			console.error('Forgot password error:', error);
 			setError(
-				error.message || 'Произошла ошибка. Пожалуйста, попробуйте позже.'
+				error instanceof Error
+					? error.message
+					: 'Произошла ошибка. Пожалуйста, попробуйте позже.'
 			);
 		} finally {
 			setIsLoading(false);

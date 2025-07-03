@@ -33,6 +33,7 @@
 	},
 	"plugins": [{ "name": "typescript-plugin-css-modules" }],
 	"include": ["src"],
+	"exclude": ["src/services/**/*.js", "src/services/store.jsx"],
 	"references": [{ "path": "./tsconfig.node.json" }],
 	"types": ["@testing-library/jest-dom"]
 }

@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styles from './ingredient-details.module.css';
-import { Preloader } from '@components/preloader/preloader.jsx';
+import { Preloader } from '@components/preloader/preloader';
 
-export const IngredientDetails = () => {
+export const IngredientDetails = (): React.JSX.Element | null => {
 	const { ingredientId } = useParams();
 	const [imageLoaded, setImageLoaded] = useState(false);
 
 	// Get ingredient from Redux store by ID
 	const ingredient = useSelector((state) =>
+		// @ts-expect-error "Ignore"
 		state.ingredients.items.find((item) => item._id === ingredientId)
 	);
 

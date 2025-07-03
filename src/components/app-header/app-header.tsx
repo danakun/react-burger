@@ -7,7 +7,7 @@ import {
 	Logo,
 } from '@ya.praktikum/react-developer-burger-ui-components';
 
-export const AppHeader = () => {
+export const AppHeader = (): React.JSX.Element => {
 	return (
 		<header className={styles.header}>
 			<nav className={`${styles.menu} p-4`}>

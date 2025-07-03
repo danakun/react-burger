@@ -1,4 +1,16 @@
-import { API_BASE_URL } from './constants';
+import { API_BASE_URL } from './constants.ts';
+
+import type {
+	TApiResponse,
+	TAuthResponse,
+	TUserResponse,
+	TRefreshTokenResponse,
+	TIngredientsResponse,
+	TOrderResponse,
+	TRequestOptions,
+	TUserData,
+	TApiError,
+} from '@utils/types';
 
 // Endpoints
 export const INGREDIENTS_ENDPOINT = `${API_BASE_URL}/api/ingredients`;
@@ -11,19 +23,22 @@ export const AUTH_LOGOUT_ENDPOINT = `${API_BASE_URL}/api/auth/logout`;
 export const AUTH_TOKEN_ENDPOINT = `${API_BASE_URL}/api/auth/token`;
 export const AUTH_USER_ENDPOINT = `${API_BASE_URL}/api/auth/user`;
 
-// Функция для обработки ответа
-export const checkResponse = (res) => {
+// Handling the response utility function
+export const checkResponse = <T>(res: Response): Promise<T> => {
 	return res.ok ? res.json() : res.json().then((err) => Promise.reject(err));
 };
 
-// Универсальная функция запроса
-function request(url, options) {
-	return fetch(url, options).then(checkResponse);
+// Request utility function
+function request<T = unknown>(
+	url: string,
+	options?: TRequestOptions
+): Promise<T> {
+	return fetch(url, options).then(checkResponse<T>);
 }
 
 // Функция для обновления токена
-export const refreshToken = () => {
-	return request(AUTH_TOKEN_ENDPOINT, {
+export const refreshToken = (): Promise<TRefreshTokenResponse> => {
+	return request<TRefreshTokenResponse>(AUTH_TOKEN_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -41,24 +56,35 @@ export const refreshToken = () => {
 	});
 };
 
-// Функция для запроса с обновлением токена
-export const fetchWithRefresh = async (url, options) => {
+// Fetch function with token refresh
+export const fetchWithRefresh = async <T>(
+	url: string,
+	options: TRequestOptions
+): Promise<T> => {
 	try {
-		return await request(url, options);
-	} catch (err) {
-		if (err.message === 'jwt expired') {
+		return await request<T>(url, options);
+	} catch (err: unknown) {
+		const error = err as TApiError;
+		if (error.message === 'jwt expired') {
 			const refreshData = await refreshToken();
+			if (!options.headers) {
+				options.headers = {};
+			}
 			options.headers.authorization = refreshData.accessToken;
-			return await request(url, options);
+			return await request<T>(url, options);
 		} else {
 			return Promise.reject(err);
 		}
 	}
 };
 
-// API функции для аутентификации
-export const registerRequest = (email, password, name) => {
-	return request(AUTH_REGISTER_ENDPOINT, {
+// API function for authentication
+export const registerRequest = ({
+	email,
+	password,
+	name,
+}: TUserData & { password: string }): Promise<TAuthResponse> => {
+	return request<TAuthResponse>(AUTH_REGISTER_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -71,8 +97,11 @@ export const registerRequest = (email, password, name) => {
 	});
 };
 
-export const loginRequest = (email, password) => {
-	return request(AUTH_LOGIN_ENDPOINT, {
+export const loginRequest = ({
+	email,
+	password,
+}: Pick<TUserData, 'email'> & { password: string }): Promise<TAuthResponse> => {
+	return request<TAuthResponse>(AUTH_LOGIN_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -84,8 +113,8 @@ export const loginRequest = (email, password) => {
 	});
 };
 
-export const logoutRequest = () => {
-	return request(AUTH_LOGOUT_ENDPOINT, {
+export const logoutRequest = (): Promise<TApiResponse> => {
+	return request<TApiResponse>(AUTH_LOGOUT_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -96,22 +125,26 @@ export const logoutRequest = () => {
 	});
 };
 
-export const getUserRequest = () => {
-	return fetchWithRefresh(AUTH_USER_ENDPOINT, {
+export const getUserRequest = (): Promise<TUserResponse> => {
+	return fetchWithRefresh<TUserResponse>(AUTH_USER_ENDPOINT, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
-			authorization: localStorage.getItem('accessToken'),
+			authorization: localStorage.getItem('accessToken') || '',
 		},
 	});
 };
 
-export const updateUserRequest = (name, email, password) => {
-	return fetchWithRefresh(AUTH_USER_ENDPOINT, {
+export const updateUserRequest = ({
+	name,
+	email,
+	password,
+}: TUserData & { password?: string }): Promise<TUserResponse> => {
+	return fetchWithRefresh<TUserResponse>(AUTH_USER_ENDPOINT, {
 		method: 'PATCH',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
-			authorization: localStorage.getItem('accessToken'),
+			authorization: localStorage.getItem('accessToken') || '',
 		},
 		body: JSON.stringify({
 			name,
@@ -121,9 +154,11 @@ export const updateUserRequest = (name, email, password) => {
 	});
 };
 
-// Password reset API functions (no Redux needed)
-export const forgotPasswordRequest = (email) => {
-	return request(PASSWORD_RESET_ENDPOINT, {
+// Password reset API functions
+export const forgotPasswordRequest = ({
+	email,
+}: Pick<TUserData, 'email'>): Promise<TApiResponse> => {
+	return request<TApiResponse>(PASSWORD_RESET_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -132,8 +167,11 @@ export const forgotPasswordRequest = (email) => {
 	});
 };
 
-export const resetPasswordRequest = (password, token) => {
-	return request(PASSWORD_RESET_CONFIRM_ENDPOINT, {
+export const resetPasswordRequest = (
+	password: string,
+	token: string
+): Promise<TApiResponse> => {
+	return request<TApiResponse>(PASSWORD_RESET_CONFIRM_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
@@ -142,20 +180,22 @@ export const resetPasswordRequest = (password, token) => {
 	});
 };
 
-export const createOrderRequest = (ingredients) => {
-	return fetchWithRefresh(ORDER_ENDPOINT, {
+export const createOrderRequest = (
+	ingredients: Array<string>
+): Promise<TOrderResponse> => {
+	return fetchWithRefresh<TOrderResponse>(ORDER_ENDPOINT, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',
-			authorization: localStorage.getItem('accessToken'),
+			authorization: localStorage.getItem('accessToken') || '',
 		},
 		body: JSON.stringify({ ingredients }),
 	});
 };
 
 // Ingredients API function
-export const getIngredientsRequest = () => {
-	return request(INGREDIENTS_ENDPOINT, {
+export const getIngredientsRequest = (): Promise<TIngredientsResponse> => {
+	return request<TIngredientsResponse>(INGREDIENTS_ENDPOINT, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json;charset=utf-8',

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const ProfileOrders = () => {
+export const ProfileOrders = (): React.JSX.Element => {
 	return (
 		<div>
 			<h2 className='text text_type_main-large'>История заказов</h2>

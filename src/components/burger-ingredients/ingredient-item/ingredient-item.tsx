@@ -2,31 +2,52 @@ import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useDrag } from 'react-dnd';
-import { DND_TYPES } from '../../../utils/constants.js';
+import { DND_TYPES } from '../../../utils/constants';
 import styles from './ingredient-item.module.css';
-import { ingredientPropType } from '@utils/prop-types.js';
 import {
 	CurrencyIcon,
 	Counter,
 } from '@ya.praktikum/react-developer-burger-ui-components';
+import { TConstructorIngredient, TIngredientData } from '@/utils/types';
 
-export const IngredientItem = ({ ingredient }) => {
+interface IngredientItemProps {
+	ingredient: TIngredientData;
+}
+
+type DragObject = {
+	ingredient: TIngredientData;
+};
+
+type DragCollectedProps = {
+	isDragging: boolean;
+};
+
+export const IngredientItem: React.FC<IngredientItemProps> = ({
+	ingredient,
+}): React.JSX.Element => {
 	const location = useLocation();
+	// @ts-expect-error Redux state not typed yet
 	const { bun, ingredients } = useSelector((state) => state.burgerConstructor);
 
 	// all ingredients used
-	const count = useMemo(() => {
+	const count = useMemo((): number => {
 		if (ingredient.type === 'bun') {
 			// Buns
 			return bun && bun._id === ingredient._id ? 2 : 0;
 		} else {
 			// Count ingredient occurrences
-			return ingredients.filter((item) => item._id === ingredient._id).length;
+			return ingredients.filter(
+				(item: TConstructorIngredient) => item._id === ingredient._id
+			).length;
 		}
 	}, [ingredient, bun, ingredients]);
 
 	// Setup drag
-	const [{ isDragging }, dragRef] = useDrag({
+	const [{ isDragging }, dragRef] = useDrag<
+		DragObject,
+		unknown,
+		DragCollectedProps
+	>({
 		type: DND_TYPES.INGREDIENT,
 		item: { ingredient },
 		collect: (monitor) => ({
@@ -65,8 +86,4 @@ export const IngredientItem = ({ ingredient }) => {
 			</Link>
 		</li>
 	);
-};
-
-IngredientItem.propTypes = {
-	ingredient: ingredientPropType.isRequired,
 };

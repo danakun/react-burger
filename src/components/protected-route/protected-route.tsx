@@ -2,14 +2,25 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+// @ts-expect-error "Ignore"
 import { getIsAuthChecked, getUserData } from '../../services/userSlice';
 import { Preloader } from '@components/preloader/preloader.jsx';
+
+type ProtectedRouteProps = {
+	component: React.ReactNode;
+	onlyUnAuth?: boolean;
+	requiresForgotPassword?: boolean;
+};
+
+type WrapperComponentProps = {
+	component: React.ReactNode;
+};
 
 export const ProtectedRoute = ({
 	component,
 	onlyUnAuth = false,
 	requiresForgotPassword = false,
-}) => {
+}: ProtectedRouteProps): React.ReactNode => {
 	const user = useSelector(getUserData);
 	const isAuthChecked = useSelector(getIsAuthChecked);
 	const location = useLocation();
@@ -58,15 +69,21 @@ export const ProtectedRoute = ({
 };
 
 // Экспорт обёрток
-export const OnlyAuth = ({ component }) => (
+export const OnlyAuth = ({
+	component,
+}: WrapperComponentProps): React.ReactNode => (
 	<ProtectedRoute component={component} onlyUnAuth={false} />
 );
 
-export const OnlyUnAuth = ({ component }) => (
+export const OnlyUnAuth = ({
+	component,
+}: WrapperComponentProps): React.ReactNode => (
 	<ProtectedRoute component={component} onlyUnAuth={true} />
 );
 
-export const ResetPasswordProtected = ({ component }) => (
+export const ResetPasswordProtected = ({
+	component,
+}: WrapperComponentProps): React.ReactNode => (
 	<ProtectedRoute
 		component={component}
 		onlyUnAuth={true}

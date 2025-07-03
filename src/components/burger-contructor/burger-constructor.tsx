@@ -10,17 +10,31 @@ import { BunItem } from './bun-item/bun-item';
 import { FillingItem } from './filling-item/filling-item';
 import { Modal } from '../modal/modal';
 import { OrderDetails } from './order-details/order-details';
+// @ts-expect-error "Ignore"
 import { createOrder, clearOrder } from '../../services/orderSlice';
 import {
 	addIngredient,
 	moveIngredient,
 	clearConstructor,
+	// @ts-expect-error "Ignore"
 } from '../../services/constructorSlice';
 import { DND_TYPES } from '../../utils/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
+// @ts-expect-error "Ignore"
 import { getUserData } from '../../services/userSlice';
+import { TConstructorIngredient, TIngredientData } from '@/utils/types';
 
-export const BurgerConstructor = () => {
+type DragObject = {
+	ingredient: TIngredientData;
+};
+
+type DropCollectedProps = {
+	canDrop: boolean;
+	isOver: boolean;
+	draggedItemType: string;
+};
+
+export const BurgerConstructor = (): React.JSX.Element => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -28,6 +42,7 @@ export const BurgerConstructor = () => {
 
 	// Get constructor ingredients from Redux state
 	const { bun, ingredients: fillings } = useSelector(
+		// @ts-expect-error "Ignore"
 		(state) => state.burgerConstructor
 	);
 
@@ -37,13 +52,17 @@ export const BurgerConstructor = () => {
 		isLoading: isOrderLoading,
 		hasError: hasOrderError,
 		error: orderError,
+		// @ts-expect-error "Ignore"
 	} = useSelector((state) => state.order);
 
 	// Handle dropping ingredients from BurgerIngredients
-	const [{ canDrop, isOver, draggedItemType }, dropRef] = useDrop({
+	const [{ canDrop, isOver, draggedItemType }, dropRef] = useDrop<
+		DragObject,
+		unknown,
+		DropCollectedProps
+	>({
 		accept: DND_TYPES.INGREDIENT,
-		drop: (draggedItem) => {
-			// explicit destructuring and validation
+		drop: (draggedItem: DragObject) => {
 			const { ingredient } = draggedItem;
 			if (ingredient) {
 				dispatch(addIngredient(ingredient));
@@ -52,14 +71,13 @@ export const BurgerConstructor = () => {
 		collect: (monitor) => ({
 			isOver: monitor.isOver(),
 			canDrop: monitor.canDrop(),
-
-			draggedItemType: monitor.getItem()?.ingredient?.type,
+			draggedItemType: monitor.getItem()?.ingredient?.type || '',
 		}),
 	});
 
 	// move ingredient
 	const moveCard = useCallback(
-		(dragIndex, hoverIndex) => {
+		(dragIndex: number, hoverIndex: number): void => {
 			if (dragIndex >= 0 && hoverIndex >= 0 && dragIndex !== hoverIndex) {
 				dispatch(moveIngredient({ dragIndex, hoverIndex }));
 			}
@@ -68,7 +86,7 @@ export const BurgerConstructor = () => {
 	);
 
 	// total price
-	const totalPrice = useMemo(() => {
+	const totalPrice = useMemo((): number => {
 		let price = 0;
 
 		// 2 buns
@@ -77,7 +95,7 @@ export const BurgerConstructor = () => {
 		}
 
 		// all fillings
-		fillings.forEach((item) => {
+		fillings.forEach((item: TConstructorIngredient) => {
 			if (item?.price) {
 				price += item.price;
 			}
@@ -86,11 +104,11 @@ export const BurgerConstructor = () => {
 		return price;
 	}, [bun, fillings]);
 
-	const canPlaceOrder = useMemo(() => {
-		return bun && fillings.length > 0 && !isOrderLoading;
+	const canPlaceOrder = useMemo((): boolean => {
+		return Boolean(bun && fillings.length > 0 && !isOrderLoading);
 	}, [bun, fillings.length, isOrderLoading]);
 
-	const handleOrderClick = useCallback(async () => {
+	const handleOrderClick = useCallback(async (): Promise<void> => {
 		if (!canPlaceOrder) return;
 
 		// Check if user is authenticated
@@ -101,10 +119,10 @@ export const BurgerConstructor = () => {
 		}
 
 		try {
-			const ingredientIds = [
-				bun._id, // Top bun
-				...fillings.map((item) => item._id), // fillings
-				bun._id, // Bottom bun
+			const ingredientIds: Array<string> = [
+				bun!._id, // Top bun
+				...fillings.map((item: TConstructorIngredient) => item._id), // fillings
+				bun!._id, // Bottom bun
 			];
 			// dispath thunk
 			const resultAction = await dispatch(createOrder(ingredientIds));
@@ -118,33 +136,45 @@ export const BurgerConstructor = () => {
 		}
 	}, [dispatch, bun, fillings, canPlaceOrder, user, navigate, location]);
 
-	const handleCloseModal = useCallback(() => {
+	const handleCloseModal = useCallback((): void => {
 		dispatch(clearOrder());
 	}, [dispatch]);
 
-	const showBunDropIndicator = isOver && canDrop && draggedItemType === 'bun';
-	const showFillingDropIndicator =
-		isOver && canDrop && draggedItemType !== 'bun' && draggedItemType;
+	const showBunDropIndicator: boolean =
+		isOver && canDrop && draggedItemType === 'bun';
+
+	const showFillingDropIndicator: boolean =
+		isOver && canDrop && draggedItemType !== 'bun' && Boolean(draggedItemType);
 
 	const getBunSlotClass = useCallback(
-		(baseClass, additionalClasses = '') => {
-			return `${baseClass} ${additionalClasses} ${showBunDropIndicator ? styles.drop_indicator : ''}`.trim();
+		(baseClass: string, additionalClasses: string = ''): string => {
+			return `${baseClass} ${additionalClasses} ${
+				showBunDropIndicator ? styles.drop_indicator : ''
+			}`.trim();
 		},
 		[showBunDropIndicator]
 	);
 
 	const getFillingSlotClass = useCallback(
-		(baseClass, additionalClasses = '') => {
-			return `${baseClass} ${additionalClasses} ${showFillingDropIndicator ? styles.drop_indicator : ''}`.trim();
+		(baseClass: string, additionalClasses: string = ''): string => {
+			return `${baseClass} ${additionalClasses} ${
+				showFillingDropIndicator ? styles.drop_indicator : ''
+			}`.trim();
 		},
 		[showFillingDropIndicator]
 	);
 
-	const getBunDropZoneText = (defaultText, dropText) => {
+	const getBunDropZoneText = (
+		defaultText: string,
+		dropText: string
+	): string => {
 		return showBunDropIndicator ? dropText : defaultText;
 	};
 
-	const getFillingDropZoneText = (defaultText, dropText) => {
+	const getFillingDropZoneText = (
+		defaultText: string,
+		dropText: string
+	): string => {
 		return showFillingDropIndicator ? dropText : defaultText;
 	};
 
@@ -169,7 +199,7 @@ export const BurgerConstructor = () => {
 				{/* Fillings */}
 				<ul className={`${styles.fillings_list} custom-scroll`}>
 					{fillings.length > 0 ? (
-						fillings.map((item, index) => (
+						fillings.map((item: TConstructorIngredient, index: number) => (
 							<FillingItem
 								key={item.ingredientId}
 								filling={item}

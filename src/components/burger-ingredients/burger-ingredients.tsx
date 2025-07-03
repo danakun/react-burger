@@ -2,26 +2,35 @@ import React, { useRef, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useSelector } from 'react-redux';
 import styles from './burger-ingredients.module.css';
-import * as PropTypes from 'prop-types';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
-import { ingredientPropType } from '@utils/prop-types.js';
 import { IngredientsCategory } from './ingredients-category/ingredients-category';
+import { TIngredientData } from '@/utils/types';
 
-export const BurgerIngredients = () => {
+type TCategorizedIngredients = {
+	buns: TIngredientData[];
+	mains: TIngredientData[];
+	sauces: TIngredientData[];
+};
+export const BurgerIngredients = (): React.JSX.Element => {
 	// Add redux
+	// @ts-expect-error Redux state not typed yet
 	const { items: ingredients } = useSelector((state) => state.ingredients);
 
-	const { buns, mains, sauces } = useMemo(() => {
+	const { buns, mains, sauces } = useMemo((): TCategorizedIngredients => {
 		return {
-			buns: ingredients.filter((item) => item.type === 'bun'),
-			mains: ingredients.filter((item) => item.type === 'main'),
-			sauces: ingredients.filter((item) => item.type === 'sauce'),
+			buns: ingredients.filter((item: TIngredientData) => item.type === 'bun'),
+			mains: ingredients.filter(
+				(item: TIngredientData) => item.type === 'main'
+			),
+			sauces: ingredients.filter(
+				(item: TIngredientData) => item.type === 'sauce'
+			),
 		};
 	}, [ingredients]);
 
-	const titleBunRef = useRef(null);
-	const titleMainRef = useRef(null);
-	const titleSauceRef = useRef(null);
+	const titleBunRef = useRef<HTMLHeadingElement>(null);
+	const titleMainRef = useRef<HTMLHeadingElement>(null);
+	const titleSauceRef = useRef<HTMLHeadingElement>(null);
 
 	const [bunsRef, inViewBuns] = useInView({
 		threshold: 0,
@@ -44,7 +53,7 @@ export const BurgerIngredients = () => {
 		currentTab = 'sauce';
 	}
 
-	const handleTabClick = (value) => {
+	const handleTabClick = (value: string): void => {
 		if (value === 'bun') {
 			titleBunRef.current?.scrollIntoView({ behavior: 'smooth' });
 		} else if (value === 'main') {
@@ -90,6 +99,7 @@ export const BurgerIngredients = () => {
 					<IngredientsCategory
 						title='Булки'
 						ingredients={buns}
+						ids={bunsRef}
 						titleRef={titleBunRef}
 					/>
 				</div>
@@ -98,6 +108,7 @@ export const BurgerIngredients = () => {
 					<IngredientsCategory
 						title='Начинки'
 						ingredients={mains}
+						ids={mainsRef}
 						titleRef={titleMainRef}
 					/>
 				</div>
@@ -106,14 +117,11 @@ export const BurgerIngredients = () => {
 					<IngredientsCategory
 						title='Соусы'
 						ingredients={sauces}
+						ids={saucesRef}
 						titleRef={titleSauceRef}
 					/>
 				</div>
 			</div>
 		</section>
 	);
-};
-
-BurgerIngredients.propTypes = {
-	ingredients: PropTypes.arrayOf(ingredientPropType.isRequired),
 };

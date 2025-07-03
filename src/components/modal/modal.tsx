@@ -1,9 +1,14 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { string, node, func } from 'prop-types';
 import { CloseIcon } from '@ya.praktikum/react-developer-burger-ui-components';
 import { ModalOverlay } from '../modal-overlay/modal-overlay';
 import styles from './modal.module.css';
+
+type ModalProps = {
+	children: React.ReactNode;
+	title?: string;
+	onClose: () => void;
+};
 
 // make modal container if necessary
 const getModalRoot = () => {
@@ -16,10 +21,14 @@ const getModalRoot = () => {
 	return modalRoot;
 };
 
-export const Modal = ({ children, title, onClose }) => {
+export const Modal = ({
+	children,
+	title,
+	onClose,
+}: ModalProps): JSX.Element => {
 	// handle ESC
 	useEffect(() => {
-		const handleEscClose = (e) => {
+		const handleEscClose = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') {
 				onClose();
 			}
@@ -47,10 +56,4 @@ export const Modal = ({ children, title, onClose }) => {
 		</>,
 		getModalRoot()
 	);
-};
-
-Modal.propTypes = {
-	children: node.isRequired,
-	title: string,
-	onClose: func.isRequired,
 };

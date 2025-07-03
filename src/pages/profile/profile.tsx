@@ -5,33 +5,51 @@ import {
 	Button,
 	PasswordInput,
 } from '@ya.praktikum/react-developer-burger-ui-components';
+// @ts-expect-error "Ignore"
 import { updateUser } from '../../services/actions';
+// @ts-expect-error "Ignore"
 import { getUserData } from '../../services/userSlice';
 import styles from './profile.module.css';
+import { TUserData } from '@/utils/types';
 
-export const Profile = () => {
+// Form data type
+type FormData = {
+	name: string;
+	email: string;
+	password: string;
+};
+
+// Editing state type
+type EditingState = {
+	name: boolean;
+	email: boolean;
+	password: boolean;
+};
+
+export const Profile = (): React.JSX.Element => {
 	const dispatch = useDispatch();
-	const user = useSelector(getUserData);
+	const user = useSelector(getUserData) as TUserData | null;
 
 	// Get loading and error states from Redux
 	const { updateUserRequest, updateUserFailed } = useSelector(
+		// @ts-expect-error "Ignore"
 		(state) => state.user
 	);
 
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<FormData>({
 		name: '',
 		email: '',
 		password: '',
 	});
 
-	const [isEditing, setIsEditing] = useState({
+	const [isEditing, setIsEditing] = useState<EditingState>({
 		name: false,
 		email: false,
 		password: false,
 	});
 
 	// Initialize form with user data when user loads
-	useEffect(() => {
+	useEffect((): void => {
 		if (user) {
 			setFormData({
 				name: user.name || '',
@@ -42,13 +60,13 @@ export const Profile = () => {
 	}, [user]);
 
 	// Define initial values based on user data
-	const initialValues = {
+	const initialValues: FormData = {
 		name: user?.name || '',
 		email: user?.email || '',
 		password: '',
 	};
 
-	const handleInputChange = (e) => {
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({
 			...prev,
@@ -56,7 +74,7 @@ export const Profile = () => {
 		}));
 	};
 
-	const handleCancel = () => {
+	const handleCancel = (): void => {
 		// Reset form to initial values (actual user data)
 		setFormData(initialValues);
 		setIsEditing({
@@ -66,7 +84,9 @@ export const Profile = () => {
 		});
 	};
 
-	const handleSave = async (e) => {
+	const handleSave = async (
+		e: React.FormEvent<HTMLFormElement>
+	): Promise<void> => {
 		e.preventDefault();
 
 		try {
@@ -86,7 +106,7 @@ export const Profile = () => {
 				password: false,
 			});
 
-			setFormData((prev) => ({
+			setFormData((prev: FormData) => ({
 				...prev,
 				password: '', // Clear password field after successful update
 			}));
@@ -95,8 +115,15 @@ export const Profile = () => {
 		}
 	};
 
+	const handleIconClick = (field: keyof EditingState): void => {
+		setIsEditing((prev: EditingState) => ({
+			...prev,
+			[field]: true,
+		}));
+	};
+
 	// Check if any field has been changed from initial values
-	const hasChanges =
+	const hasChanges: boolean =
 		formData.name !== initialValues.name ||
 		formData.email !== initialValues.email ||
 		formData.password !== '';
@@ -111,7 +138,7 @@ export const Profile = () => {
 					name='name'
 					onChange={handleInputChange}
 					icon={isEditing.name ? undefined : 'EditIcon'}
-					onIconClick={() => setIsEditing((prev) => ({ ...prev, name: true }))}
+					onIconClick={() => handleIconClick('name')}
 					disabled={!isEditing.name}
 					size='default'
 				/>
@@ -125,7 +152,7 @@ export const Profile = () => {
 					name='email'
 					onChange={handleInputChange}
 					icon={isEditing.email ? undefined : 'EditIcon'}
-					onIconClick={() => setIsEditing((prev) => ({ ...prev, email: true }))}
+					onIconClick={() => handleIconClick('email')}
 					disabled={!isEditing.email}
 					size='default'
 				/>

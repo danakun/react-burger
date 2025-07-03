@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-export const OrderDetails = () => {
+export const OrderDetails = (): React.JSX.Element => {
 	const { number } = useParams();
 
 	return (
