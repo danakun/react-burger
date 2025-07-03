@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@ya.praktikum/react-developer-burger-ui-components';
 import styles from './not-found.module.css';
 
-export const NotFound = () => {
+export const NotFound = (): React.JSX.Element => {
 	return (
 		<div className={styles.container}>
 			<div className={styles.content}>

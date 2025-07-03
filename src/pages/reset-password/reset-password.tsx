@@ -8,18 +8,23 @@ import {
 import { resetPasswordRequest } from '../../utils/api';
 import styles from './reset-password.module.css';
 
-export const ResetPassword = () => {
+type FormData = {
+	password: string;
+	token: string;
+};
+
+export const ResetPassword = (): React.JSX.Element => {
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<FormData>({
 		password: '',
 		token: '',
 	});
 	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState('');
+	const [error, setError] = useState<string>('');
 
-	const handleInputChange = (e) => {
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = e.target;
-		setFormData((prev) => ({
+		setFormData((prev: FormData) => ({
 			...prev,
 			[name]: value,
 		}));
@@ -27,7 +32,9 @@ export const ResetPassword = () => {
 		if (error) setError('');
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (
+		e: React.FormEvent<HTMLFormElement>
+	): Promise<void> => {
 		e.preventDefault();
 
 		if (!formData.password || !formData.token) {
@@ -55,7 +62,9 @@ export const ResetPassword = () => {
 		} catch (error) {
 			console.error('Reset password error:', error);
 			setError(
-				error.message || 'Произошла ошибка. Пожалуйста, попробуйте позже.'
+				error instanceof Error
+					? error.message
+					: 'Произошла ошибка. Пожалуйста, попробуйте позже.'
 			);
 		} finally {
 			setIsLoading(false);

@@ -1,10 +1,19 @@
 import React from 'react';
 import styles from './bun-item.module.css';
-import * as PropTypes from 'prop-types';
-import { ingredientPropType } from '@utils/prop-types.js';
 import { ConstructorElement } from '@ya.praktikum/react-developer-burger-ui-components';
+import { TConstructorIngredient } from '@/utils/types';
 
-export const BunItem = ({ bun, type, isLocked }) => {
+interface BunItemProps {
+	bun: TConstructorIngredient;
+	type: 'top' | 'bottom';
+	isLocked?: boolean;
+}
+
+export const BunItem: React.FC<BunItemProps> = ({
+	bun,
+	type,
+	isLocked,
+}): React.JSX.Element => {
 	const position = type === 'top' ? '(верх)' : '(низ)';
 
 	return (
@@ -18,10 +27,4 @@ export const BunItem = ({ bun, type, isLocked }) => {
 			/>
 		</div>
 	);
-};
-
-BunItem.propTypes = {
-	bun: ingredientPropType.isRequired,
-	type: PropTypes.oneOf(['top', 'bottom']).isRequired,
-	isLocked: PropTypes.bool,
 };

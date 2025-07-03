@@ -1,4 +1,3 @@
-// pages/login/login.jsx
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -6,11 +5,13 @@ import {
 	Input,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
+// @ts-expect-error "Ignore"
 import { login } from '../../services/actions';
 import {
 	clearErrors,
 	getLoginRequest,
 	getLoginFailed,
+	// @ts-expect-error "Ignore"
 } from '../../services/userSlice';
 import styles from './login.module.css';
 
@@ -19,22 +20,24 @@ export const Login = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 
-	const loginRequest = useSelector(getLoginRequest);
-	const loginFailed = useSelector(getLoginFailed);
+	const loginRequest = useSelector(getLoginRequest) as boolean;
+	const loginFailed = useSelector(getLoginFailed) as boolean;
 
 	const [form, setForm] = useState({
 		email: '',
 		password: '',
 	});
 
-	const handleInputChange = (e) => {
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		setForm({
 			...form,
 			[e.target.name]: e.target.value,
 		});
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (
+		e: React.FormEvent<HTMLFormElement>
+	): Promise<void> => {
 		e.preventDefault();
 
 		// Очищаем предыдущие ошибки

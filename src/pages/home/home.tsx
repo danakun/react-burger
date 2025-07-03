@@ -2,11 +2,12 @@ import { DndProvider } from 'react-dnd';
 import { useSelector } from 'react-redux';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import styles from './home.module.css';
-import { BurgerIngredients } from '@components/burger-ingredients/burger-ingredients.jsx';
-import { BurgerConstructor } from '@components/burger-contructor/burger-constructor.jsx';
-import { Preloader } from '@components/preloader/preloader.jsx';
+import { BurgerIngredients } from '@/components/burger-ingredients/burger-ingredients';
+import { BurgerConstructor } from '@/components/burger-contructor/burger-constructor';
+import { Preloader } from '@/components/preloader/preloader';
 
-export const Home = () => {
+export const Home = (): React.JSX.Element => {
+	// @ts-expect-error "Ignore"
 	const { isLoading, hasError } = useSelector((state) => state.ingredients);
 
 	return (
