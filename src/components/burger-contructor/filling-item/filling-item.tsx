@@ -1,22 +1,46 @@
 import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { useDispatch } from 'react-redux';
-import * as PropTypes from 'prop-types';
 import styles from './filling-item.module.css';
-import { ingredientPropType } from '@utils/prop-types.js';
 import {
 	DragIcon,
 	ConstructorElement,
 } from '@ya.praktikum/react-developer-burger-ui-components';
+// @ts-expect-error "Ignore"
 import { removeIngredient } from '../../../services/constructorSlice';
 import { DND_TYPES } from '../../../utils/constants';
+import { TIngredientData } from '@/utils/types';
 
-export const FillingItem = ({ filling, index, moveCard, isDraggable }) => {
+interface FillingItemProps {
+	filling: TIngredientData & { ingredientId: string };
+	index: number;
+	moveCard: (dragIndex: number, hoverIndex: number) => void;
+	isDraggable?: boolean;
+}
+
+type DragObject = {
+	index: number;
+	filling: TIngredientData;
+};
+
+// Drag collect interface
+type DragCollectedProps = { isDragging: boolean };
+
+export const FillingItem: React.FC<FillingItemProps> = ({
+	filling,
+	index,
+	moveCard,
+	isDraggable = true,
+}): React.JSX.Element => {
 	const dispatch = useDispatch();
-	const ref = useRef(null);
+	const ref = useRef<HTMLLIElement>(null);
 
 	// Setup drag
-	const [{ isDragging }, drag] = useDrag({
+	const [{ isDragging }, drag] = useDrag<
+		DragObject,
+		unknown,
+		DragCollectedProps
+	>({
 		type: DND_TYPES.CONSTRUCTOR_INGREDIENT,
 		item: () => ({ index, filling }),
 		collect: (monitor) => ({
@@ -25,7 +49,7 @@ export const FillingItem = ({ filling, index, moveCard, isDraggable }) => {
 	});
 
 	// Setup drop
-	const [, drop] = useDrop({
+	const [, drop] = useDrop<DragObject, unknown, unknown>({
 		accept: DND_TYPES.CONSTRUCTOR_INGREDIENT,
 		hover: (item, monitor) => {
 			if (!ref.current) {
@@ -49,7 +73,9 @@ export const FillingItem = ({ filling, index, moveCard, isDraggable }) => {
 
 			// Determine mouse position
 			const clientOffset = monitor.getClientOffset();
-
+			if (clientOffset === null) {
+				return; // or throw an error, depending on your requirements
+			}
 			// Get pixels to the top
 			const hoverClientY = clientOffset.y - hoverBoundingRect.top;
 
@@ -77,7 +103,7 @@ export const FillingItem = ({ filling, index, moveCard, isDraggable }) => {
 	// Connect drag and drop to the same element
 	drag(drop(ref));
 
-	const handleDelete = () => {
+	const handleDelete = (): void => {
 		// Remove ingredient from constructor using its Id
 		dispatch(removeIngredient(filling.ingredientId));
 	};
@@ -98,11 +124,4 @@ export const FillingItem = ({ filling, index, moveCard, isDraggable }) => {
 			/>
 		</li>
 	);
-};
-
-FillingItem.propTypes = {
-	filling: ingredientPropType.isRequired,
-	index: PropTypes.number.isRequired,
-	moveCard: PropTypes.func.isRequired,
-	isDraggable: PropTypes.bool,
 };

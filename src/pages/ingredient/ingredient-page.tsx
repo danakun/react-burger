@@ -1,7 +1,7 @@
 import styles from './ingredient-page.module.css';
 import { IngredientDetails } from '@components/burger-ingredients/ingredient-details/ingredient-details';
 
-export const IngredientPage = () => {
+export const IngredientPage = (): React.JSX.Element => {
 	return (
 		<>
 			<div className={styles.ingredient_section}>

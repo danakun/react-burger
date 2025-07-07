@@ -1,8 +1,13 @@
 import React from 'react';
-import * as PropTypes from 'prop-types';
 import styles from './modal-overlay.module.css';
 
-export const ModalOverlay = ({ onClick }) => {
+type ModalOverlayProps = {
+	onClick: () => void;
+};
+
+export const ModalOverlay = ({
+	onClick,
+}: ModalOverlayProps): React.JSX.Element => {
 	return (
 		<div
 			className={styles.overlay}
@@ -10,8 +15,4 @@ export const ModalOverlay = ({ onClick }) => {
 			role='presentation'
 			onKeyDown={onClick}></div>
 	);
-};
-
-ModalOverlay.propTypes = {
-	onClick: PropTypes.func.isRequired,
 };

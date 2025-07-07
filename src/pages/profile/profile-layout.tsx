@@ -1,10 +1,11 @@
 import React from 'react';
 import { useLocation, Link, Outlet } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+// @ts-expect-error "Ignore Redux"
 import { logout } from '../../services/actions';
 import styles from './profile.module.css';
 
-export const ProfileLayout = () => {
+export const ProfileLayout = (): React.JSX.Element => {
 	const location = useLocation();
 	const dispatch = useDispatch();
 

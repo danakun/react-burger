@@ -8,7 +8,7 @@ import {
 import { AUTH_REGISTER_ENDPOINT } from '../../utils/api';
 import styles from './register.module.css';
 
-export const Register = () => {
+export const Register = (): React.JSX.Element => {
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({
 		name: '',
@@ -18,7 +18,7 @@ export const Register = () => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState('');
 
-	const handleInputChange = (e) => {
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({
 			...prev,
@@ -28,7 +28,7 @@ export const Register = () => {
 		if (error) setError('');
 	};
 
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		// Валидация формы

@@ -1,11 +1,19 @@
 import React from 'react';
-import { bool, number } from 'prop-types';
-// import { useSelector } from 'react-redux';
 import doneIcon from '../../../assets/images/done.svg';
 import { Preloader } from '@components/preloader/preloader.jsx';
 import styles from './order-details.module.css';
 
-export const OrderDetails = ({ orderNumber, isLoading, hasError }) => {
+interface IOrderDetailsProps {
+	orderNumber: number;
+	isLoading: boolean;
+	hasError: boolean;
+}
+
+export const OrderDetails: React.FC<IOrderDetailsProps> = ({
+	orderNumber,
+	isLoading,
+	hasError,
+}): React.JSX.Element => {
 	if (isLoading) {
 		return (
 			<div className={styles.container}>
@@ -49,10 +57,4 @@ export const OrderDetails = ({ orderNumber, isLoading, hasError }) => {
 			</p>
 		</div>
 	);
-};
-
-OrderDetails.propTypes = {
-	orderNumber: number.isRequired,
-	isLoading: bool,
-	hasError: bool,
 };
