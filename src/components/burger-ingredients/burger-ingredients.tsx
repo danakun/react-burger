@@ -1,6 +1,6 @@
 import React, { useRef, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useSelector } from 'react-redux';
+import { useSelector } from '../../services/store';
 import styles from './burger-ingredients.module.css';
 import { Tab } from '@ya.praktikum/react-developer-burger-ui-components';
 import { IngredientsCategory } from './ingredients-category/ingredients-category';
@@ -13,7 +13,6 @@ type TCategorizedIngredients = {
 };
 export const BurgerIngredients = (): React.JSX.Element => {
 	// Add redux
-	// @ts-expect-error Redux state not typed yet
 	const { items: ingredients } = useSelector((state) => state.ingredients);
 
 	const { buns, mains, sauces } = useMemo((): TCategorizedIngredients => {

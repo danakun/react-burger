@@ -42,7 +42,7 @@ export const OrderDetails: React.FC<IOrderDetailsProps> = ({
 				{orderNumber}
 			</p>
 
-			<p className='text text_type_main-medium mb-15'>идентификатор заказа</p>
+			<p className='text text_type_main-medium mb-15'>Идентификатор заказа</p>
 
 			<div className={styles.doneIconWrapper}>
 				<img src={doneIcon} alt='Готово' className={styles.doneIcon} />

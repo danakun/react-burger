@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector } from '../../../services/store';
 import styles from './ingredient-details.module.css';
 import { Preloader } from '@components/preloader/preloader';
 
@@ -10,13 +10,12 @@ export const IngredientDetails = (): React.JSX.Element | null => {
 
 	// Get ingredient from Redux store by ID
 	const ingredient = useSelector((state) =>
-		// @ts-expect-error "Ignore"
 		state.ingredients.items.find((item) => item._id === ingredientId)
 	);
 
-	// If ingredient not found, show error or nothing
+	// If ingredient not found return null
 	if (!ingredient) {
-		return null; // or return a "not found" message
+		return null;
 	}
 
 	return (

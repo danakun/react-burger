@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector } from '../../../services/store';
 import { useDrag } from 'react-dnd';
 import { DND_TYPES } from '../../../utils/constants';
 import styles from './ingredient-item.module.css';
@@ -26,7 +26,6 @@ export const IngredientItem: React.FC<IngredientItemProps> = ({
 	ingredient,
 }): React.JSX.Element => {
 	const location = useLocation();
-	// @ts-expect-error Redux state not typed yet
 	const { bun, ingredients } = useSelector((state) => state.burgerConstructor);
 
 	// all ingredients used

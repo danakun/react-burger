@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from '@/services/store';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
 	Input,
 	Button,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-// @ts-expect-error "Ignore"
 import { login } from '../../services/actions';
 import {
 	clearErrors,
 	getLoginRequest,
 	getLoginFailed,
-	// @ts-expect-error "Ignore"
 } from '../../services/userSlice';
 import styles from './login.module.css';
 

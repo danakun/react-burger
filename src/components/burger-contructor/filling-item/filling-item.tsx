@@ -1,12 +1,11 @@
 import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from '@/services/store';
 import styles from './filling-item.module.css';
 import {
 	DragIcon,
 	ConstructorElement,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-// @ts-expect-error "Ignore"
 import { removeIngredient } from '../../../services/constructorSlice';
 import { DND_TYPES } from '../../../utils/constants';
 import { TIngredientData } from '@/utils/types';

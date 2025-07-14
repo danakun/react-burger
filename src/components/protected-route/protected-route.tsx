@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-// @ts-expect-error "Ignore"
 import { getIsAuthChecked, getUserData } from '../../services/userSlice';
 import { Preloader } from '@components/preloader/preloader.jsx';
 

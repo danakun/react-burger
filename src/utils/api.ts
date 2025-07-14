@@ -193,6 +193,17 @@ export const createOrderRequest = (
 	});
 };
 
+export const getOrderByNumberApi = async (
+	orderNumber: number
+): Promise<TOrderResponse> => {
+	return fetchWithRefresh<TOrderResponse>(`${ORDER_ENDPOINT}/${orderNumber}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json;charset=utf-8',
+		},
+	});
+};
+
 // Ingredients API function
 export const getIngredientsRequest = (): Promise<TIngredientsResponse> => {
 	return request<TIngredientsResponse>(INGREDIENTS_ENDPOINT, {
