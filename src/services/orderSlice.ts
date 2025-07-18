@@ -21,8 +21,8 @@ type TOrderState = {
 };
 
 export const createOrder = createAsyncThunk<
-	TCreateOrderResponse, // Return type (what the API gives us)
-	string[] // Argument type (ingredient IDs)
+	TCreateOrderResponse, // API response
+	string[] // ingredient ids
 >('order/createOrder', async (ingredientIds, { rejectWithValue }) => {
 	try {
 		const result = await fetchWithRefresh<TCreateOrderResponse>(
@@ -49,10 +49,11 @@ export const getOrderByNumber = createAsyncThunk<TOrderData, number>(
 	async (orderNumber, { rejectWithValue }) => {
 		try {
 			const result = await getOrderByNumberApi(orderNumber);
-			if (!result.data?.order) {
+			// Based on the working example, the order is in result.orders[0]
+			if (!result.orders || result.orders.length === 0) {
 				return rejectWithValue('Order not found');
 			}
-			return result.data.order;
+			return result.orders[0];
 		} catch (error) {
 			return rejectWithValue(
 				error instanceof Error ? error.message : 'Order not found'
@@ -104,6 +105,23 @@ const orderSlice = createSlice({
 				state.hasError = true;
 				state.error = action.payload as string;
 				state.order = null;
+			})
+
+			.addCase(getOrderByNumber.pending, (state) => {
+				state.isLoading = true;
+				state.hasError = false;
+				state.error = null;
+			})
+			.addCase(getOrderByNumber.fulfilled, (state, action) => {
+				state.isLoading = false;
+				state.hasError = false;
+				state.order = action.payload;
+				state.error = null;
+			})
+			.addCase(getOrderByNumber.rejected, (state, action) => {
+				state.isLoading = false;
+				state.hasError = true;
+				state.error = action.payload as string;
 			});
 	},
 });
@@ -121,6 +139,7 @@ export const { getOrder, getIsLoading, getHasError, getError, getOrderNumber } =
 	orderSlice.selectors;
 
 export default orderSlice.reducer;
+
 // import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 // import {
 // 	ORDER_ENDPOINT,

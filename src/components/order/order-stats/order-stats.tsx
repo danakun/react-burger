@@ -1,60 +1,51 @@
 import React, { useMemo } from 'react';
 import styles from './order-stats.module.css';
-
-interface Order {
-	_id: string;
-	ingredients: string[];
-	status: 'created' | 'pending' | 'done';
-	number: number;
-	createdAt: string;
-	updatedAt: string;
-}
+import { TOrderData } from '../../../utils/types';
 
 interface FeedStatisticsProps {
-	orders: Order[];
+	orders: TOrderData[];
 	total: number;
 	totalToday: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const OrderNumbersList: React.FC<{
-	orders: Order[];
-	maxColumns?: number;
-	itemsPerColumn?: number;
-}> = ({ orders, maxColumns = 2, itemsPerColumn = 5 }) => {
-	const chunkedOrders = useMemo(() => {
-		const chunks: Order[][] = [];
+// const OrderNumbersList: React.FC<{
+// 	orders: TOrderData[]; // Changed from Order[] to TOrderData[]
+// 	maxColumns?: number;
+// 	itemsPerColumn?: number;
+// }> = ({ orders, maxColumns = 2, itemsPerColumn = 5 }) => {
+// 	const chunkedOrders = useMemo(() => {
+// 		const chunks: TOrderData[][] = []; // Changed from Order[][] to TOrderData[][]
 
-		for (let i = 0; i < orders.length; i += itemsPerColumn) {
-			chunks.push(orders.slice(i, i + itemsPerColumn));
-			if (chunks.length >= maxColumns) break;
-		}
+// 		for (let i = 0; i < orders.length; i += itemsPerColumn) {
+// 			chunks.push(orders.slice(i, i + itemsPerColumn));
+// 			if (chunks.length >= maxColumns) break;
+// 		}
 
-		return chunks;
-	}, [orders, maxColumns, itemsPerColumn]);
+// 		return chunks;
+// 	}, [orders, maxColumns, itemsPerColumn]);
 
-	return (
-		<div className={`${styles.orderNumbersContainer}`}>
-			{chunkedOrders.map((chunk, columnIndex) => (
-				<div key={columnIndex} className={`${styles.orderNumbersColumn}`}>
-					{chunk.map((order) => (
-						<p
-							key={order._id}
-							className={`text text_type_digits-default ${styles.orderNumber}`}>
-							{order.number}
-						</p>
-					))}
-				</div>
-			))}
-		</div>
-	);
-};
+// 	return (
+// 		<div className={`${styles.orderNumbersContainer}`}>
+// 			{chunkedOrders.map((chunk, columnIndex) => (
+// 				<div key={columnIndex} className={`${styles.orderNumbersColumn}`}>
+// 					{chunk.map((order) => (
+// 						<p
+// 							key={order._id}
+// 							className={`text text_type_digits-default ${styles.orderNumber}`}>
+// 							{order.number}
+// 						</p>
+// 					))}
+// 				</div>
+// 			))}
+// 		</div>
+// 	);
+// };
 
-export const FeedStatistics: React.FC<FeedStatisticsProps> = ({
+export const FeedStatistics = ({
 	orders,
 	total,
 	totalToday,
-}) => {
+}: FeedStatisticsProps) => {
 	const { readyOrders, inProgressOrders } = useMemo(() => {
 		const ready = orders.filter((order) => order.status === 'done');
 		const inProgress = orders.filter(
@@ -73,7 +64,7 @@ export const FeedStatistics: React.FC<FeedStatisticsProps> = ({
 				<div className={`${styles.readyOrders}`}>
 					<h2 className='text text_type_main-medium mb-6'>Готовы:</h2>
 					<div className={`${styles.orderNumbersContainer}`}>
-						{readyOrders.map((order) => (
+						{readyOrders.slice(0, 10).map((order) => (
 							<p
 								key={order._id}
 								className={`text text_type_digits-default ${styles.orderNumberMint}`}>
@@ -86,7 +77,7 @@ export const FeedStatistics: React.FC<FeedStatisticsProps> = ({
 				<div className={`${styles.inProgressOrders}`}>
 					<h2 className='text text_type_main-medium mb-6'>В работе:</h2>
 					<div className={`${styles.orderNumbersContainer}`}>
-						{inProgressOrders.map((order) => (
+						{inProgressOrders.slice(0, 10).map((order) => (
 							<p
 								key={order._id}
 								className={`text text_type_digits-default ${styles.orderNumber}`}>

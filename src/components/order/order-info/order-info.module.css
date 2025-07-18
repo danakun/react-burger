@@ -1,7 +1,12 @@
 .container {
 	max-width: 640px;
-	margin: 32px auto;
+	margin: 0 auto 32px;
 	color: #f2f2f3;
+}
+
+.loadingText {
+	padding: 48px 0;
+	text-align: center;
 }
 
 .content {
@@ -42,7 +47,7 @@
 }
 
 .ingredientsList {
-	max-height: 300px;
+	max-height: 240px;
 	margin: 0;
 	padding-right: 8px;
 	overflow-y: auto;

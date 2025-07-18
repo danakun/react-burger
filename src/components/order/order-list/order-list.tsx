@@ -1,29 +1,13 @@
 import React from 'react';
 import { OrderCard } from '../order-card/order.card';
+import { TOrderData, TIngredientData } from '../../../utils/types';
 import styles from './order-list.module.css';
 
-interface Order {
-	_id: string;
-	ingredients: string[];
-	status: 'created' | 'pending' | 'done';
-	number: number;
-	createdAt: string;
-	updatedAt: string;
-}
-
-interface Ingredient {
-	_id: string;
-	name: string;
-	price: number;
-	image: string;
-	type: string;
-}
-
 interface OrdersListProps {
-	orders: Order[];
-	ingredients: Ingredient[];
+	orders: TOrderData[];
+	ingredients: TIngredientData[];
 	showStatus?: boolean;
-	linkTo: string; // "feed" or "profile/orders"
+	linkTo: string;
 }
 
 export const OrdersList: React.FC<OrdersListProps> = ({
