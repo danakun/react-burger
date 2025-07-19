@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from '../../services/store';
 import { OrdersList } from '../../components/order/order-list/order-list';
 import { FeedStatistics } from '../../components/order/order-stats/order-stats';
 import { Preloader } from '../../components/preloader/preloader';
