@@ -55,6 +55,34 @@ module.exports = {
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
 		'postcss-modules/no-undef-class': 'error',
 		'postcss-modules/no-unused-class': 'warn',
-		"import/named": "off",
+		'import/named': 'off',
 	},
+	// Add Cypress-specific configuration
+	overrides: [
+		{
+			files: [
+				'cypress/**/*.{js,jsx,ts,tsx}',
+				'cypress.config.{js,ts}',
+				'**/*.cy.{js,jsx,ts,tsx}',
+			],
+			extends: ['plugin:cypress/recommended'],
+			plugins: ['cypress'],
+			env: {
+				'cypress/globals': true,
+			},
+			rules: {
+				// Disable some rules that might conflict with Cypress
+				'@typescript-eslint/no-unused-expressions': 'off',
+				'@typescript-eslint/no-namespace': 'off',
+				// Allow console.log in Cypress tests
+				'no-console': 'off',
+				// Cypress-specific rule adjustments
+				'cypress/no-unnecessary-waiting': 'warn',
+				'cypress/assertion-before-screenshot': 'warn',
+				'cypress/no-force': 'warn',
+				'cypress/no-async-tests': 'error',
+				'cypress/no-pause': 'error',
+			},
+		},
+	],
 };

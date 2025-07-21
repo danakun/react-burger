@@ -97,7 +97,7 @@ const orderSlice = createSlice({
 			.addCase(createOrder.fulfilled, (state, action) => {
 				state.isLoading = false;
 				state.hasError = false;
-				state.order = action.payload.order; // Extract the nested order
+				state.order = action.payload.order;
 				state.error = null;
 			})
 			.addCase(createOrder.rejected, (state, action) => {
