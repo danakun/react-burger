@@ -10,6 +10,7 @@ import type {
 	TRequestOptions,
 	TUserData,
 	TApiError,
+	TOrderData,
 } from '@utils/types';
 
 // Endpoints
@@ -190,6 +191,28 @@ export const createOrderRequest = (
 			authorization: localStorage.getItem('accessToken') || '',
 		},
 		body: JSON.stringify({ ingredients }),
+	});
+};
+
+// export const getOrderByNumberApi = async (
+// 	orderNumber: number
+// ): Promise<TOrderResponse> => {
+// 	return fetchWithRefresh<TOrderResponse>(`${ORDER_ENDPOINT}/${orderNumber}`, {
+// 		method: 'GET',
+// 		headers: {
+// 			'Content-Type': 'application/json;charset=utf-8',
+// 			authorization: localStorage.getItem('accessToken') || '',
+// 		},
+// 	});
+// };
+export const getOrderByNumberApi = async (
+	orderNumber: number
+): Promise<{ orders: TOrderData[] }> => {
+	return request<{ orders: TOrderData[] }>(`${ORDER_ENDPOINT}/${orderNumber}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json;charset=utf-8',
+		},
 	});
 };
 

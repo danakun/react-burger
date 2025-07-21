@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from '@/services/store';
 import {
 	Input,
 	Button,
 	PasswordInput,
 } from '@ya.praktikum/react-developer-burger-ui-components';
-// @ts-expect-error "Ignore"
 import { updateUser } from '../../services/actions';
-// @ts-expect-error "Ignore"
 import { getUserData } from '../../services/userSlice';
 import styles from './profile.module.css';
 import { TUserData } from '@/utils/types';
@@ -32,7 +30,6 @@ export const Profile = (): React.JSX.Element => {
 
 	// Get loading and error states from Redux
 	const { updateUserRequest, updateUserFailed } = useSelector(
-		// @ts-expect-error "Ignore"
 		(state) => state.user
 	);
 

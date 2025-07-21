@@ -1,0 +1,22 @@
+.ordersList {
+	flex: 1;
+	max-width: 600px;
+	max-height: calc(100vh - 200px);
+	padding-top: 8px;
+	padding-right: 8px;
+	overflow-y: auto;
+}
+
+.ordersList::-webkit-scrollbar {
+	width: 8px;
+}
+
+.ordersList::-webkit-scrollbar-track {
+	background: #2f2f37;
+	border-radius: 8px;
+}
+
+.ordersList::-webkit-scrollbar-thumb {
+	background: #4c4cff;
+	border-radius: 8px;
+}

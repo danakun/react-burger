@@ -1,5 +1,5 @@
 import { DndProvider } from 'react-dnd';
-import { useSelector } from 'react-redux';
+import { useSelector } from '../../services/store';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import styles from './home.module.css';
 import { BurgerIngredients } from '@/components/burger-ingredients/burger-ingredients';
@@ -7,7 +7,6 @@ import { BurgerConstructor } from '@/components/burger-contructor/burger-constru
 import { Preloader } from '@/components/preloader/preloader';
 
 export const Home = (): React.JSX.Element => {
-	// @ts-expect-error "Ignore"
 	const { isLoading, hasError } = useSelector((state) => state.ingredients);
 
 	return (

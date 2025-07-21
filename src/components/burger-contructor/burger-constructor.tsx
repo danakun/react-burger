@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from '../../services/store';
 import styles from './burger-constructor.module.css';
 import { useDrop } from 'react-dnd';
 import {
@@ -10,17 +10,14 @@ import { BunItem } from './bun-item/bun-item';
 import { FillingItem } from './filling-item/filling-item';
 import { Modal } from '../modal/modal';
 import { OrderDetails } from './order-details/order-details';
-// @ts-expect-error "Ignore"
 import { createOrder, clearOrder } from '../../services/orderSlice';
 import {
 	addIngredient,
 	moveIngredient,
 	clearConstructor,
-	// @ts-expect-error "Ignore"
 } from '../../services/constructorSlice';
 import { DND_TYPES } from '../../utils/constants';
 import { useNavigate, useLocation } from 'react-router-dom';
-// @ts-expect-error "Ignore"
 import { getUserData } from '../../services/userSlice';
 import { TConstructorIngredient, TIngredientData } from '@/utils/types';
 
@@ -42,7 +39,6 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
 	// Get constructor ingredients from Redux state
 	const { bun, ingredients: fillings } = useSelector(
-		// @ts-expect-error "Ignore"
 		(state) => state.burgerConstructor
 	);
 
@@ -52,7 +48,6 @@ export const BurgerConstructor = (): React.JSX.Element => {
 		isLoading: isOrderLoading,
 		hasError: hasOrderError,
 		error: orderError,
-		// @ts-expect-error "Ignore"
 	} = useSelector((state) => state.order);
 
 	// Handle dropping ingredients from BurgerIngredients
@@ -124,12 +119,20 @@ export const BurgerConstructor = (): React.JSX.Element => {
 				...fillings.map((item: TConstructorIngredient) => item._id), // fillings
 				bun!._id, // Bottom bun
 			];
-			// dispath thunk
+
+			console.log('Dispatching order with ingredients:', ingredientIds); // Debug log
+
+			// Dispatch thunk - now properly typed
 			const resultAction = await dispatch(createOrder(ingredientIds));
+
+			console.log('Order result action:', resultAction); // Debug log
 
 			// If success clear
 			if (createOrder.fulfilled.match(resultAction)) {
+				console.log('Order successful, clearing constructor'); // Debug log
 				dispatch(clearConstructor());
+			} else {
+				console.log('Order failed:', resultAction); // Debug log
 			}
 		} catch (error) {
 			console.error('Failed to create order:', error);
@@ -263,13 +266,21 @@ export const BurgerConstructor = (): React.JSX.Element => {
 			</div>
 
 			{order && (
-				<Modal onClose={handleCloseModal}>
-					<OrderDetails
-						orderNumber={order.order?.number || order.number}
-						isLoading={isOrderLoading}
-						hasError={hasOrderError}
-					/>
-				</Modal>
+				<>
+					{console.log('=== ORDER DEBUG ===')}
+					{console.log('Full order object:', order)}
+					{console.log('Order keys:', Object.keys(order))}
+					{console.log('Order.number:', order.number)}
+					{console.log('Order._id:', order._id)}
+					{console.log('=== END DEBUG ===')}
+					<Modal onClose={handleCloseModal}>
+						<OrderDetails
+							orderNumber={order.number}
+							isLoading={isOrderLoading}
+							hasError={hasOrderError}
+						/>
+					</Modal>
+				</>
 			)}
 		</section>
 	);

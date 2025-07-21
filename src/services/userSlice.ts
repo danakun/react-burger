@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
 	login,
 	logout,
@@ -7,32 +7,54 @@ import {
 	getUser,
 	updateUser,
 } from './actions';
+import type { TUserData } from '../utils/types';
+
+type TUserState = {
+	user: TUserData | null;
+	isAuthChecked: boolean;
+
+	// Loading states
+	loginRequest: boolean;
+	registerRequest: boolean;
+	logoutRequest: boolean;
+	getUserRequest: boolean;
+	updateUserRequest: boolean;
+
+	// Error states
+	loginFailed: boolean;
+	registerFailed: boolean;
+	logoutFailed: boolean;
+	getUserFailed: boolean;
+	updateUserFailed: boolean;
+};
+
+const initialState: TUserState = {
+	user: null,
+	isAuthChecked: false,
+
+	// Loading states
+	loginRequest: false,
+	registerRequest: false,
+	logoutRequest: false,
+	getUserRequest: false,
+	updateUserRequest: false,
+
+	// Error states
+	loginFailed: false,
+	registerFailed: false,
+	logoutFailed: false,
+	getUserFailed: false,
+	updateUserFailed: false,
+};
 
 export const userSlice = createSlice({
 	name: 'user',
-	initialState: {
-		user: null,
-		isAuthChecked: false,
-
-		// Loading states
-		loginRequest: false,
-		registerRequest: false,
-		logoutRequest: false,
-		getUserRequest: false,
-		updateUserRequest: false,
-
-		// Error states
-		loginFailed: false,
-		registerFailed: false,
-		logoutFailed: false,
-		getUserFailed: false,
-		updateUserFailed: false,
-	},
+	initialState,
 	reducers: {
-		setUser: (state, action) => {
+		setUser: (state, action: PayloadAction<TUserData | null>) => {
 			state.user = action.payload;
 		},
-		setAuthChecked: (state, action) => {
+		setAuthChecked: (state, action: PayloadAction<boolean>) => {
 			state.isAuthChecked = action.payload;
 		},
 		clearErrors: (state) => {
@@ -145,6 +167,13 @@ export const userSlice = createSlice({
 });
 
 export const { setUser, setAuthChecked, clearErrors } = userSlice.actions;
+
+// Export action types (like in the examples)
+type TUserActionCreators = typeof userSlice.actions;
+export type TUserActions = ReturnType<
+	TUserActionCreators[keyof TUserActionCreators]
+>;
+
 export const {
 	getUserData,
 	getIsAuthChecked,
@@ -155,4 +184,5 @@ export const {
 	getUpdateUserRequest,
 	getUpdateUserFailed,
 } = userSlice.selectors;
+
 export default userSlice.reducer;

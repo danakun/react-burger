@@ -26,9 +26,11 @@ export type TIngredientData = {
 	__v: number;
 };
 
+export type TOrderStatus = 'created' | 'pending' | 'done';
+
 export type TOrderData = {
 	_id: string;
-	status: string;
+	status: TOrderStatus;
 	number: number;
 	createdAt: string;
 	updatedAt: string;
@@ -70,8 +72,10 @@ export type TRequestOptions = RequestInit & {
 // Redux State Types (for when you're ready to type Redux)
 export type TIngredientsState = {
 	items: TIngredientData[];
+	itemsMap: Record<string, TIngredientData>;
 	isLoading: boolean;
 	hasError: boolean;
+	error: string | null;
 };
 
 export type TUserState = {
@@ -81,6 +85,8 @@ export type TUserState = {
 	loginFailed: boolean;
 	registerRequest: boolean;
 	registerFailed: boolean;
+	accessToken?: string;
+	refreshToken?: string;
 };
 
 export type TConstructorState = {
@@ -96,6 +102,29 @@ export type TOrderState = {
 	orderRequest: boolean;
 	orderFailed: boolean;
 	orderNumber: number | null;
+};
+
+export type TFeedState = {
+	orders: TOrderData[];
+	total: number;
+	totalToday: number;
+	isConnecting: boolean;
+	isConnected: boolean;
+	error: string | null;
+};
+
+export type TAllFeedMessage = {
+	success: boolean;
+	orders: TOrderData[];
+	total: number;
+	totalToday: number;
+};
+
+export type TUserFeedMessage = {
+	success: boolean;
+	orders: TOrderData[];
+	total: number;
+	totalToday: number;
 };
 
 export type TApiError = {
