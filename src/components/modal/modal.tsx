@@ -43,11 +43,14 @@ export const Modal = ({
 
 	return createPortal(
 		<>
-			<ModalOverlay onClick={onClose} />
-			<div className={styles.modal}>
+			<ModalOverlay onClick={onClose} data-cy='modal-overlay' />
+			<div className={styles.modal} data-cy='modal'>
 				<div className={styles.header}>
 					{title && <h2 className='text text_type_main-large'>{title}</h2>}
-					<button className={styles.closeButton} onClick={onClose}>
+					<button
+						className={styles.closeButton}
+						onClick={onClose}
+						data-cy='modal-close-button'>
 						<CloseIcon type='primary' />
 					</button>
 				</div>

@@ -63,7 +63,7 @@ export const BurgerIngredients = (): React.JSX.Element => {
 	};
 
 	return (
-		<section className={styles.burger_ingredients}>
+		<section className={styles.burger_ingredients} data-cy='ingredients'>
 			<nav>
 				<ul className={styles.menu}>
 					<li>

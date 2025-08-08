@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import allFeedReducer, { initialState } from '../all-feed/allFeedSlice';
 import {
 	allFeedConnect,
@@ -17,13 +17,13 @@ describe('allFeedSlice reducer', () => {
 		vi.clearAllMocks();
 	});
 
-	test('should return the initial state', () => {
+	it('should return the initial state when called with undefined state', () => {
 		const result = allFeedReducer(undefined, { type: '@@INIT' });
 		expect(result).toEqual(initialState);
 	});
 
-	describe('connection actions', () => {
-		test('should handle allFeedConnect', () => {
+	describe('WebSocket connection lifecycle management', () => {
+		it('should clear existing errors when initiating connection', () => {
 			const stateWithError = {
 				...initialState,
 				error: 'Previous error',
@@ -32,16 +32,16 @@ describe('allFeedSlice reducer', () => {
 			const action = allFeedConnect('ws://localhost:3001');
 			const result = allFeedReducer(stateWithError, action);
 
-			// Test fields that should change
+			// Should clear error on connection attempt
 			expect(result.error).toBe(null);
 
-			// Test fields that should NOT change
+			// Should not change connection state or data yet
 			expect(result.isConnecting).toBe(stateWithError.isConnecting);
 			expect(result.isConnected).toBe(stateWithError.isConnected);
 			expect(result.orders).toEqual(stateWithError.orders);
 		});
 
-		test('should handle allFeedConnecting', () => {
+		it('should set connecting state and clear previous connection', () => {
 			const stateConnected = {
 				...initialState,
 				isConnecting: false,
@@ -52,17 +52,17 @@ describe('allFeedSlice reducer', () => {
 			const action = allFeedConnecting();
 			const result = allFeedReducer(stateConnected, action);
 
-			// Test fields that should change
+			// Should update connection state and clear error
 			expect(result.isConnecting).toBe(true);
 			expect(result.isConnected).toBe(false);
 			expect(result.error).toBe(null);
 
-			// Test fields that should NOT change
+			// Should preserve existing data
 			expect(result.orders).toEqual(stateConnected.orders);
 			expect(result.total).toBe(stateConnected.total);
 		});
 
-		test('should handle allFeedDisconnect', () => {
+		it('should reset all state to initial values when disconnecting', () => {
 			const stateWithData = {
 				...initialState,
 				isConnected: true,
@@ -76,7 +76,7 @@ describe('allFeedSlice reducer', () => {
 			const action = allFeedDisconnect();
 			const result = allFeedReducer(stateWithData, action);
 
-			// Test all fields that should be reset
+			// Should reset everything to initial state
 			expect(result.isConnecting).toBe(false);
 			expect(result.isConnected).toBe(false);
 			expect(result.orders).toEqual([]);
@@ -85,7 +85,7 @@ describe('allFeedSlice reducer', () => {
 			expect(result.error).toBe(null);
 		});
 
-		test('should handle allFeedOpen', () => {
+		it('should mark connection as established when WebSocket opens', () => {
 			const connectingState = {
 				...initialState,
 				isConnecting: true,
@@ -95,15 +95,17 @@ describe('allFeedSlice reducer', () => {
 			const action = allFeedOpen();
 			const result = allFeedReducer(connectingState, action);
 
+			// Should establish connection and clear errors
 			expect(result.isConnected).toBe(true);
 			expect(result.isConnecting).toBe(false);
 			expect(result.error).toBe(null);
 
+			// Should preserve existing data
 			expect(result.orders).toEqual(connectingState.orders);
 			expect(result.total).toBe(connectingState.total);
 		});
 
-		test('should handle allFeedClose', () => {
+		it('should mark connection as closed while preserving data and errors', () => {
 			const connectedState = {
 				...initialState,
 				isConnected: true,
@@ -114,14 +116,16 @@ describe('allFeedSlice reducer', () => {
 			const action = allFeedClose();
 			const result = allFeedReducer(connectedState, action);
 
+			// Should close connection
 			expect(result.isConnected).toBe(false);
 			expect(result.isConnecting).toBe(false);
 
+			// Should preserve data and error state
 			expect(result.orders).toEqual(connectedState.orders);
-			expect(result.error).toBe(connectedState.error); // error is preserved
+			expect(result.error).toBe(connectedState.error);
 		});
 
-		test('should handle allFeedError', () => {
+		it('should handle WebSocket errors by closing connection and setting error message', () => {
 			const connectedState = {
 				...initialState,
 				isConnected: true,
@@ -132,19 +136,19 @@ describe('allFeedSlice reducer', () => {
 			const action = allFeedError(errorMessage);
 			const result = allFeedReducer(connectedState, action);
 
-			// Test fields that should change
+			// Should close connection and set error
 			expect(result.isConnected).toBe(false);
 			expect(result.isConnecting).toBe(false);
 			expect(result.error).toBe(errorMessage);
 
-			// Test fields that should NOT change
+			// Should preserve existing data
 			expect(result.orders).toEqual(connectedState.orders);
 			expect(result.total).toBe(connectedState.total);
 		});
 	});
 
-	describe('allFeedMessage', () => {
-		test('should handle message with valid orders', () => {
+	describe('message processing and order validation', () => {
+		it('should update state with valid orders from successful message', () => {
 			const stateWithError = {
 				...initialState,
 				error: 'Old error',
@@ -160,16 +164,18 @@ describe('allFeedSlice reducer', () => {
 			const action = allFeedMessage(payload);
 			const result = allFeedReducer(stateWithError, action);
 
+			// Should update with new data and clear errors
 			expect(result.orders).toEqual(mockValidOrders);
 			expect(result.total).toBe(150);
 			expect(result.totalToday).toBe(20);
 			expect(result.error).toBe(null);
 
+			// Should preserve connection state
 			expect(result.isConnecting).toBe(stateWithError.isConnecting);
 			expect(result.isConnected).toBe(stateWithError.isConnected);
 		});
 
-		test('should filter out invalid orders', () => {
+		it('should filter out invalid orders while keeping valid ones', () => {
 			const mixedOrders = [...mockValidOrders, ...mockInvalidOrders];
 
 			const payload = {
@@ -188,7 +194,7 @@ describe('allFeedSlice reducer', () => {
 			expect(result.totalToday).toBe(10);
 		});
 
-		test('should handle message with empty orders array', () => {
+		it('should handle empty orders array by clearing existing orders', () => {
 			const stateWithOrders = {
 				...initialState,
 				orders: mockValidOrders,
@@ -205,13 +211,14 @@ describe('allFeedSlice reducer', () => {
 			const action = allFeedMessage(payload);
 			const result = allFeedReducer(stateWithOrders, action);
 
+			// Should clear all data
 			expect(result.orders).toEqual([]);
 			expect(result.total).toBe(0);
 			expect(result.totalToday).toBe(0);
 			expect(result.error).toBe(null);
 		});
 
-		test('should handle message with all invalid orders', () => {
+		it('should result in empty orders array when all orders are invalid', () => {
 			const payload = {
 				success: true,
 				orders: mockInvalidOrders,
@@ -222,7 +229,7 @@ describe('allFeedSlice reducer', () => {
 			const action = allFeedMessage(payload);
 			const result = allFeedReducer(initialState, action);
 
-			// Test that all invalid orders are filtered out
+			// Should filter out all invalid orders
 			expect(result.orders).toEqual([]);
 			expect(result.total).toBe(50);
 			expect(result.totalToday).toBe(5);
@@ -230,7 +237,7 @@ describe('allFeedSlice reducer', () => {
 	});
 
 	describe('order validation edge cases', () => {
-		test('should handle orders with extra properties', () => {
+		it('should accept orders with extra properties beyond required fields', () => {
 			const orderWithExtraProps = {
 				...mockValidOrders[0],
 				extraField: 'should be ignored',
@@ -252,9 +259,9 @@ describe('allFeedSlice reducer', () => {
 			expect(result.orders[0]).toEqual(orderWithExtraProps);
 		});
 
-		test('should reject orders with wrong field types', () => {
+		it('should reject orders with incorrect field data types', () => {
 			const invalidTypeOrder = {
-				_id: 123, // Wrong- should be string
+				_id: 123, // Wrong type - should be string
 				status: 'done',
 				number: 12345,
 				createdAt: '2024-03-13T10:30:00.000Z',
@@ -273,7 +280,7 @@ describe('allFeedSlice reducer', () => {
 			const action = allFeedMessage(payload);
 			const result = allFeedReducer(initialState, action);
 
-			// Should eliminate order with wrong field types
+			// Should reject order with wrong field types
 			expect(result.orders).toEqual([]);
 		});
 	});

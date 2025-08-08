@@ -183,10 +183,18 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
 	return (
 		<section className={styles.burger_constructor}>
-			<div ref={dropRef} className={styles.burger_components}>
+			<div
+				ref={dropRef}
+				className={styles.burger_components}
+				data-cy='constructor'>
 				{/* Top Bun */}
 				{bun ? (
-					<BunItem bun={bun} type='top' isLocked={true} />
+					<BunItem
+						bun={bun}
+						type='top'
+						isLocked={true}
+						data-cy='constructor-bun-1'
+					/>
 				) : (
 					<div
 						className={getBunSlotClass(styles.empty_bun, styles.empty_bun_top)}>
@@ -200,7 +208,9 @@ export const BurgerConstructor = (): React.JSX.Element => {
 				)}
 
 				{/* Fillings */}
-				<ul className={`${styles.fillings_list} custom-scroll`}>
+				<ul
+					className={`${styles.fillings_list} custom-scroll`}
+					data-cy='constructor-ingredients'>
 					{fillings.length > 0 ? (
 						fillings.map((item: TConstructorIngredient, index: number) => (
 							<FillingItem
@@ -225,7 +235,12 @@ export const BurgerConstructor = (): React.JSX.Element => {
 
 				{/* Bottom Bun */}
 				{bun ? (
-					<BunItem bun={bun} type='bottom' isLocked={true} />
+					<BunItem
+						bun={bun}
+						type='bottom'
+						isLocked={true}
+						data-cy='constructor-bun-2'
+					/>
 				) : (
 					<div
 						className={getBunSlotClass(
@@ -249,6 +264,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
 				</div>
 
 				<Button
+					data-cy='order-button'
 					type='primary'
 					size='large'
 					htmlType='button'

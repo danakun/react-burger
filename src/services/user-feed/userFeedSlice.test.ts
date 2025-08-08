@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userFeedReducer, {
 	clearUserFeed,
 	clearUserFeedError,
@@ -21,13 +21,13 @@ describe('userFeedSlice reducer', () => {
 		vi.clearAllMocks();
 	});
 
-	test('should return the initial state', () => {
+	it('should return the initial state when called with undefined state', () => {
 		const result = userFeedReducer(undefined, { type: '@@INIT' });
 		expect(result).toEqual(initialState);
 	});
 
-	describe('regular reducers', () => {
-		test('should handle clearUserFeed', () => {
+	describe('regular reducers for clearing data', () => {
+		it('should clear all user feed data while preserving connection state', () => {
 			const stateWithData = {
 				...initialState,
 				orders: mockUserOrders,
@@ -39,16 +39,18 @@ describe('userFeedSlice reducer', () => {
 			const action = clearUserFeed();
 			const result = userFeedReducer(stateWithData, action);
 
+			// Should clear data fields
 			expect(result.orders).toEqual([]);
 			expect(result.total).toBe(0);
 			expect(result.totalToday).toBe(0);
 			expect(result.error).toBe(null);
 
+			// Should preserve connection state
 			expect(result.isConnecting).toBe(stateWithData.isConnecting);
 			expect(result.isConnected).toBe(stateWithData.isConnected);
 		});
 
-		test('should handle clearUserFeedError', () => {
+		it('should clear only error state while preserving all other data', () => {
 			const stateWithError = {
 				...initialState,
 				error: 'Something went wrong',
@@ -57,16 +59,18 @@ describe('userFeedSlice reducer', () => {
 			const action = clearUserFeedError();
 			const result = userFeedReducer(stateWithError, action);
 
+			// Should clear error
 			expect(result.error).toBe(null);
 
+			// Should preserve all other state
 			expect(result.orders).toEqual(stateWithError.orders);
 			expect(result.total).toBe(stateWithError.total);
 			expect(result.isConnecting).toBe(stateWithError.isConnecting);
 		});
 	});
 
-	describe('connection actions', () => {
-		test('should handle userFeedConnect', () => {
+	describe('WebSocket connection lifecycle', () => {
+		it('should clear existing errors when initiating connection', () => {
 			const stateWithError = {
 				...initialState,
 				error: 'Previous error',
@@ -75,15 +79,15 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedConnect('ws://localhost:3001');
 			const result = userFeedReducer(stateWithError, action);
 
-			// Test fields that should change
+			// Should clear error on connection attempt
 			expect(result.error).toBe(null);
 
-			// Test fields that should NOT change
+			// Should not change connection state yet
 			expect(result.isConnecting).toBe(stateWithError.isConnecting);
 			expect(result.isConnected).toBe(stateWithError.isConnected);
 		});
 
-		test('should handle userFeedConnecting', () => {
+		it('should set connecting state and clear previous connection', () => {
 			const stateConnected = {
 				...initialState,
 				isConnecting: false,
@@ -93,15 +97,17 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedConnecting();
 			const result = userFeedReducer(stateConnected, action);
 
+			// Should update connection state
 			expect(result.isConnecting).toBe(true);
 			expect(result.isConnected).toBe(false);
 			expect(result.error).toBe(null);
 
+			// Should preserve data
 			expect(result.orders).toEqual(stateConnected.orders);
 			expect(result.total).toBe(stateConnected.total);
 		});
 
-		test('should handle userFeedDisconnect', () => {
+		it('should reset all state when disconnecting', () => {
 			const stateWithData = {
 				...initialState,
 				isConnected: true,
@@ -114,7 +120,7 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedDisconnect();
 			const result = userFeedReducer(stateWithData, action);
 
-			// Test fields that should be reset
+			// Should reset everything to initial state
 			expect(result.orders).toEqual([]);
 			expect(result.total).toBe(0);
 			expect(result.totalToday).toBe(0);
@@ -123,7 +129,7 @@ describe('userFeedSlice reducer', () => {
 			expect(result.error).toBe(null);
 		});
 
-		test('should handle userFeedOpen', () => {
+		it('should mark connection as established when WebSocket opens', () => {
 			const connectingState = {
 				...initialState,
 				isConnecting: true,
@@ -132,6 +138,7 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedOpen();
 			const result = userFeedReducer(connectingState, action);
 
+			// Should establish connection
 			expect(result.isConnected).toBe(true);
 			expect(result.isConnecting).toBe(false);
 			expect(result.error).toBe(null);
@@ -139,7 +146,7 @@ describe('userFeedSlice reducer', () => {
 			expect(result.orders).toEqual(connectingState.orders);
 		});
 
-		test('should handle userFeedClose', () => {
+		it('should mark connection as closed while preserving data and errors', () => {
 			const connectedState = {
 				...initialState,
 				isConnected: true,
@@ -149,27 +156,31 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedClose();
 			const result = userFeedReducer(connectedState, action);
 
+			// Should close connection
 			expect(result.isConnected).toBe(false);
 			expect(result.isConnecting).toBe(false);
 
+			// Should preserve data and error state
 			expect(result.orders).toEqual(connectedState.orders);
 			expect(result.error).toBe(connectedState.error);
 		});
 	});
 
-	describe('userFeedError', () => {
-		test('should handle generic error', () => {
+	describe('WebSocket error handling', () => {
+		it('should handle generic WebSocket errors by closing connection', () => {
 			const action = userFeedError('Some error occurred');
 			const result = userFeedReducer(initialState, action);
 
+			// Should close connection and set error
 			expect(result.isConnected).toBe(false);
 			expect(result.isConnecting).toBe(false);
 			expect(result.error).toBe('Some error occurred');
 
+			// Should preserve existing data
 			expect(result.orders).toEqual(initialState.orders);
 		});
 
-		test('should handle token error with friendly message', () => {
+		it('should provide message for token authentication errors', () => {
 			const action = userFeedError('Invalid or missing token');
 			const result = userFeedReducer(initialState, action);
 
@@ -183,8 +194,8 @@ describe('userFeedSlice reducer', () => {
 		});
 	});
 
-	describe('userFeedMessage', () => {
-		test('should handle successful message with orders', () => {
+	describe('WebSocket message processing', () => {
+		it('should update state with successful message containing orders', () => {
 			const stateWithError = {
 				...initialState,
 				error: 'Old error',
@@ -209,7 +220,7 @@ describe('userFeedSlice reducer', () => {
 			expect(result.isConnected).toBe(stateWithError.isConnected);
 		});
 
-		test('should handle unsuccessful message with error', () => {
+		it('should handle unsuccessful messages by setting error state', () => {
 			const payload: TUserFeedMessage & { message: string } = {
 				success: false,
 				message: 'Something went wrong',
@@ -221,13 +232,14 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedMessage(payload);
 			const result = userFeedReducer(initialState, action);
 
+			// Should set error from message
 			expect(result.error).toBe('Something went wrong');
 
 			expect(result.orders).toEqual(initialState.orders);
 			expect(result.isConnecting).toBe(initialState.isConnecting);
 		});
 
-		test('should handle token error in message payload', () => {
+		it('should provide error for token errors in message payload', () => {
 			const payload: TUserFeedMessage & { message: string } = {
 				success: false,
 				message: 'Invalid or missing token',
@@ -243,6 +255,7 @@ describe('userFeedSlice reducer', () => {
 				'Ошибка авторизации. Попробуйте перезайти в систему.'
 			);
 
+			// Should preserve existing data
 			expect(result.orders).toEqual(initialState.orders);
 		});
 	});

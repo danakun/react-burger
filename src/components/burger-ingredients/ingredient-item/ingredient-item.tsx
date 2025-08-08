@@ -57,6 +57,7 @@ export const IngredientItem: React.FC<IngredientItemProps> = ({
 	return (
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 		<li
+			data-cy='ingredient-item'
 			ref={dragRef}
 			className={`${styles.ingredient} pt-6 pb-8 pl-4 pr-4 ${
 				isDragging ? styles.ingredient_dragging : ''

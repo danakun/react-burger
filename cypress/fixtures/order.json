@@ -1,0 +1,18 @@
+{
+	"success": true,
+	"name": "Space Burger",
+	"order": {
+		"_id": "65f123456789abcdef012345",
+		"status": "done",
+		"number": 12345,
+		"createdAt": "2024-03-13T10:30:00.000Z",
+		"updatedAt": "2024-03-13T10:35:00.000Z",
+		"name": "Space Burger",
+		"ingredients": [
+			"643d69a5c3f7b9001cfa093c",
+			"643d69a5c3f7b9001cfa0941",
+			"643d69a5c3f7b9001cfa093e",
+			"643d69a5c3f7b9001cfa093c"
+		]
+	}
+}
