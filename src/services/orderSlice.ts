@@ -62,7 +62,7 @@ export const getOrderByNumber = createAsyncThunk<TOrderData, number>(
 	}
 );
 
-const initialState: TOrderState = {
+export const initialState: TOrderState = {
 	order: null,
 	isLoading: false,
 	hasError: false,
