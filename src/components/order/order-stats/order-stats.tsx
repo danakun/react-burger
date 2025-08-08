@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import styles from './order-stats.module.css';
 import { TOrderData } from '../../../utils/types';
 
@@ -7,39 +7,6 @@ interface FeedStatisticsProps {
 	total: number;
 	totalToday: number;
 }
-
-// const OrderNumbersList: React.FC<{
-// 	orders: TOrderData[]; // Changed from Order[] to TOrderData[]
-// 	maxColumns?: number;
-// 	itemsPerColumn?: number;
-// }> = ({ orders, maxColumns = 2, itemsPerColumn = 5 }) => {
-// 	const chunkedOrders = useMemo(() => {
-// 		const chunks: TOrderData[][] = []; // Changed from Order[][] to TOrderData[][]
-
-// 		for (let i = 0; i < orders.length; i += itemsPerColumn) {
-// 			chunks.push(orders.slice(i, i + itemsPerColumn));
-// 			if (chunks.length >= maxColumns) break;
-// 		}
-
-// 		return chunks;
-// 	}, [orders, maxColumns, itemsPerColumn]);
-
-// 	return (
-// 		<div className={`${styles.orderNumbersContainer}`}>
-// 			{chunkedOrders.map((chunk, columnIndex) => (
-// 				<div key={columnIndex} className={`${styles.orderNumbersColumn}`}>
-// 					{chunk.map((order) => (
-// 						<p
-// 							key={order._id}
-// 							className={`text text_type_digits-default ${styles.orderNumber}`}>
-// 							{order.number}
-// 						</p>
-// 					))}
-// 				</div>
-// 			))}
-// 		</div>
-// 	);
-// };
 
 export const FeedStatistics = ({
 	orders,

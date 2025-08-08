@@ -39,13 +39,12 @@ describe('userFeedSlice reducer', () => {
 			const action = clearUserFeed();
 			const result = userFeedReducer(stateWithData, action);
 
-			// Should clear data fields
+			// should clear data fields
 			expect(result.orders).toEqual([]);
 			expect(result.total).toBe(0);
 			expect(result.totalToday).toBe(0);
 			expect(result.error).toBe(null);
 
-			// Should preserve connection state
 			expect(result.isConnecting).toBe(stateWithData.isConnecting);
 			expect(result.isConnected).toBe(stateWithData.isConnected);
 		});
@@ -59,10 +58,8 @@ describe('userFeedSlice reducer', () => {
 			const action = clearUserFeedError();
 			const result = userFeedReducer(stateWithError, action);
 
-			// Should clear error
 			expect(result.error).toBe(null);
 
-			// Should preserve all other state
 			expect(result.orders).toEqual(stateWithError.orders);
 			expect(result.total).toBe(stateWithError.total);
 			expect(result.isConnecting).toBe(stateWithError.isConnecting);
@@ -79,10 +76,9 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedConnect('ws://localhost:3001');
 			const result = userFeedReducer(stateWithError, action);
 
-			// Should clear error on connection attempt
+			// clear error on connection attempt
 			expect(result.error).toBe(null);
 
-			// Should not change connection state yet
 			expect(result.isConnecting).toBe(stateWithError.isConnecting);
 			expect(result.isConnected).toBe(stateWithError.isConnected);
 		});
@@ -97,12 +93,10 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedConnecting();
 			const result = userFeedReducer(stateConnected, action);
 
-			// Should update connection state
 			expect(result.isConnecting).toBe(true);
 			expect(result.isConnected).toBe(false);
 			expect(result.error).toBe(null);
 
-			// Should preserve data
 			expect(result.orders).toEqual(stateConnected.orders);
 			expect(result.total).toBe(stateConnected.total);
 		});
@@ -120,7 +114,7 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedDisconnect();
 			const result = userFeedReducer(stateWithData, action);
 
-			// Should reset everything to initial state
+			// reset everything to initial state
 			expect(result.orders).toEqual([]);
 			expect(result.total).toBe(0);
 			expect(result.totalToday).toBe(0);
@@ -138,7 +132,6 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedOpen();
 			const result = userFeedReducer(connectingState, action);
 
-			// Should establish connection
 			expect(result.isConnected).toBe(true);
 			expect(result.isConnecting).toBe(false);
 			expect(result.error).toBe(null);
@@ -156,11 +149,9 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedClose();
 			const result = userFeedReducer(connectedState, action);
 
-			// Should close connection
 			expect(result.isConnected).toBe(false);
 			expect(result.isConnecting).toBe(false);
 
-			// Should preserve data and error state
 			expect(result.orders).toEqual(connectedState.orders);
 			expect(result.error).toBe(connectedState.error);
 		});
@@ -171,12 +162,10 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedError('Some error occurred');
 			const result = userFeedReducer(initialState, action);
 
-			// Should close connection and set error
 			expect(result.isConnected).toBe(false);
 			expect(result.isConnecting).toBe(false);
 			expect(result.error).toBe('Some error occurred');
 
-			// Should preserve existing data
 			expect(result.orders).toEqual(initialState.orders);
 		});
 
@@ -232,7 +221,6 @@ describe('userFeedSlice reducer', () => {
 			const action = userFeedMessage(payload);
 			const result = userFeedReducer(initialState, action);
 
-			// Should set error from message
 			expect(result.error).toBe('Something went wrong');
 
 			expect(result.orders).toEqual(initialState.orders);
@@ -255,7 +243,6 @@ describe('userFeedSlice reducer', () => {
 				'Ошибка авторизации. Попробуйте перезайти в систему.'
 			);
 
-			// Should preserve existing data
 			expect(result.orders).toEqual(initialState.orders);
 		});
 	});

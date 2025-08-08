@@ -261,7 +261,7 @@ describe('allFeedSlice reducer', () => {
 
 		it('should reject orders with incorrect field data types', () => {
 			const invalidTypeOrder = {
-				_id: 123, // Wrong type - should be string
+				_id: 123, // Wrong - should be string
 				status: 'done',
 				number: 12345,
 				createdAt: '2024-03-13T10:30:00.000Z',
