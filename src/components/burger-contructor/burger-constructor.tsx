@@ -289,7 +289,7 @@ export const BurgerConstructor = (): React.JSX.Element => {
 					{console.log('Order.number:', order.number)}
 					{console.log('Order._id:', order._id)}
 					{console.log('=== END DEBUG ===')}
-					<Modal onClose={handleCloseModal}>
+					<Modal onClose={handleCloseModal} data-cy='order-modal'>
 						<OrderDetails
 							orderNumber={order.number}
 							isLoading={isOrderLoading}
