@@ -1,14 +1,25 @@
+import { TEST_URL } from '../../src/utils/constants';
+
 // eslint-disable-next-line eslint-comments/disable-enable-pair
 /* eslint-disable cypress/no-unnecessary-waiting */
 describe('Burger Constructor Drag and Drop - Essential Tests', () => {
+	// Define selector constants to avoid duplication
+	const SELECTORS = {
+		CONSTRUCTOR_BUN_1: '[data-cy=constructor-bun-1]',
+		CONSTRUCTOR_BUN_2: '[data-cy=constructor-bun-2]',
+		CONSTRUCTOR_BUNS_ALL: '[data-cy^=constructor-bun]',
+		MODAL: '[class*="modal"]',
+		ORDER_MODAL: '[data-cy="order-modal"]',
+	};
+
 	beforeEach(() => {
 		// Mock ingredients API
-		cy.intercept('GET', 'https://norma.nomoreparties.space/api/ingredients', {
+		cy.intercept('GET', 'api/ingredients', {
 			fixture: 'ingredients.json',
 		}).as('getIngredients');
 
 		// Mock user authentication API - return authenticated user
-		cy.intercept('GET', 'https://norma.nomoreparties.space/api/auth/user', {
+		cy.intercept('GET', 'api/auth/user', {
 			statusCode: 200,
 			body: {
 				success: true,
@@ -20,7 +31,7 @@ describe('Burger Constructor Drag and Drop - Essential Tests', () => {
 		}).as('getUser');
 
 		// Mock order creation API
-		cy.intercept('POST', 'https://norma.nomoreparties.space/api/orders', {
+		cy.intercept('POST', 'api/orders', {
 			fixture: 'order.json',
 		}).as('createOrder');
 
@@ -31,7 +42,7 @@ describe('Burger Constructor Drag and Drop - Essential Tests', () => {
 		});
 
 		// Visit the main page
-		cy.visit('http://localhost:5173');
+		cy.visit(TEST_URL);
 		cy.wait('@getIngredients');
 
 		// Wait for user authentication check
@@ -81,7 +92,7 @@ describe('Burger Constructor Drag and Drop - Essential Tests', () => {
 			cy.wait(1500);
 
 			// Simple check: verify a modal appears (any modal)
-			cy.get('[class*="modal"]').should('be.visible');
+			cy.get(SELECTORS.MODAL).should('be.visible');
 
 			// That's it! If modal is visible, the order creation worked
 			// Close modal by pressing ESC to clean up
@@ -102,7 +113,7 @@ describe('Burger Constructor Drag and Drop - Essential Tests', () => {
 			cy.get('@createOrder.all').should('have.length', 0);
 
 			// No modal should appear
-			cy.get('[data-cy="order-modal"]').should('not.exist');
+			cy.get(SELECTORS.ORDER_MODAL).should('not.exist');
 		});
 	});
 
@@ -110,13 +121,13 @@ describe('Burger Constructor Drag and Drop - Essential Tests', () => {
 		it('should add bun to both top and bottom positions', () => {
 			performDragDrop('@bunIngredient', '@constructor');
 
-			cy.get('[data-cy=constructor-bun-1]')
+			cy.get(SELECTORS.CONSTRUCTOR_BUN_1)
 				.should('exist')
 				.and('contain', 'Ингредиент 1');
-			cy.get('[data-cy=constructor-bun-2]')
+			cy.get(SELECTORS.CONSTRUCTOR_BUN_2)
 				.should('exist')
 				.and('contain', 'Ингредиент 1');
-			cy.get('[data-cy^=constructor-bun]').should('have.length', 2);
+			cy.get(SELECTORS.CONSTRUCTOR_BUNS_ALL).should('have.length', 2);
 		});
 
 		it('should add main ingredient to fillings section', () => {
@@ -144,8 +155,8 @@ describe('Burger Constructor Drag and Drop - Essential Tests', () => {
 			performDragDrop('@sauceIngredient', '@constructor');
 
 			// Verify structure
-			cy.get('[data-cy=constructor-bun-1]').should('exist');
-			cy.get('[data-cy=constructor-bun-2]').should('exist');
+			cy.get(SELECTORS.CONSTRUCTOR_BUN_1).should('exist');
+			cy.get(SELECTORS.CONSTRUCTOR_BUN_2).should('exist');
 			cy.get('@constructorIngredients').find('li').should('have.length', 2);
 
 			// Verify order button is enabled
@@ -157,16 +168,16 @@ describe('Burger Constructor Drag and Drop - Essential Tests', () => {
 		it('should replace existing buns when new bun is dragged', () => {
 			// Add first bun
 			performDragDrop('@bunIngredient', '@constructor');
-			cy.get('[data-cy=constructor-bun-1]').should('contain', 'Ингредиент 1');
+			cy.get(SELECTORS.CONSTRUCTOR_BUN_1).should('contain', 'Ингредиент 1');
 
 			// Add different bun (should replace)
 			cy.get('@allIngredients').eq(1).as('secondBun');
 			performDragDrop('@secondBun', '@constructor');
 
 			// Verify replacement
-			cy.get('[data-cy=constructor-bun-1]').should('contain', 'Ингредиент 2');
-			cy.get('[data-cy=constructor-bun-2]').should('contain', 'Ингредиент 2');
-			cy.get('[data-cy^=constructor-bun]').should('have.length', 2);
+			cy.get(SELECTORS.CONSTRUCTOR_BUN_1).should('contain', 'Ингредиент 2');
+			cy.get(SELECTORS.CONSTRUCTOR_BUN_2).should('contain', 'Ингредиент 2');
+			cy.get(SELECTORS.CONSTRUCTOR_BUNS_ALL).should('have.length', 2);
 		});
 	});
 
@@ -197,8 +208,8 @@ describe('Burger Constructor Drag and Drop - Essential Tests', () => {
 			}
 
 			// Verify structure
-			cy.get('[data-cy=constructor-bun-1]').should('exist');
-			cy.get('[data-cy=constructor-bun-2]').should('exist');
+			cy.get(SELECTORS.CONSTRUCTOR_BUN_1).should('exist');
+			cy.get(SELECTORS.CONSTRUCTOR_BUN_2).should('exist');
 			cy.get('@constructorIngredients').find('li').should('have.length', 5);
 		});
 	});
