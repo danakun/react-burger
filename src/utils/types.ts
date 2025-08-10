@@ -23,7 +23,6 @@ export type TIngredientData = {
 	image: string;
 	image_mobile: string;
 	image_large: string;
-	__v: number;
 };
 
 export type TOrderStatus = 'created' | 'pending' | 'done';

@@ -10,6 +10,7 @@ export const ModalOverlay = ({
 }: ModalOverlayProps): React.JSX.Element => {
 	return (
 		<div
+			data-cy='modal-overlay'
 			className={styles.overlay}
 			onClick={onClick}
 			role='presentation'

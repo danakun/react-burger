@@ -6,3 +6,6 @@ build
 dist
 webpack/*.js
 package*.json
+cypress/downloads
+cypress/screenshots
+cypress/videos

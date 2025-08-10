@@ -15,7 +15,7 @@ interface TUserFeedState extends TFeedState {
 	// user-specific properties
 }
 
-const initialState: TUserFeedState = {
+export const initialState: TUserFeedState = {
 	orders: [],
 	total: 0,
 	totalToday: 0,

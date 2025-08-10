@@ -3,6 +3,8 @@
 A modern React application for building custom burgers with drag-and-drop functionality. Built with React, Redux, and react-dnd for an interactive user experience.
 Try it here [React Space Burger](https://react-space-burger.vercel.app/)
 
+Try it here deployed [React Space Burger](https://react-space-burger.vercel.app/)
+
 ## Features
 
 - 🍔 Interactive burger builder with drag-and-drop interface
@@ -22,17 +24,20 @@ Try it here [React Space Burger](https://react-space-burger.vercel.app/)
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone [your-repo-url]
 cd react-burger-builder
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Start the development server:
+
 ```bash
 npm start
 ```
@@ -46,16 +51,19 @@ The application will be available at `http://localhost:3000`.
 The project includes automated code quality checks that run before each commit. To ensure smooth development:
 
 **Recommended workflow:**
+
 ```bash
 npm run check  # Run all checks before committing
 ```
 
 **Individual commands:**
+
 - `npm run lint` - Run ESLint and auto-fix issues
-- `npm run stylelint:fix` - Check and fix CSS/SCSS styling issues  
+- `npm run stylelint:fix` - Check and fix CSS/SCSS styling issues
 - `npm run format` - Format code with Prettier
 
 **Committing changes:**
+
 ```bash
 npm run commit  # Interactive commit with conventional commit format
 ```
@@ -90,6 +98,7 @@ import Component from '@components/component';
 ```
 
 Available aliases:
+
 - `@` → `./src`
 - `@components` → `./src/components`
 - `@services` → `./src/services`
@@ -116,5 +125,3 @@ Available aliases:
 - `npm run stylelint:fix` - Lint and fix CSS files
 - `npm run format` - Format code with Prettier
 - `npm run commit` - Interactive commit tool
-
-

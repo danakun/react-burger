@@ -12,7 +12,7 @@ import type { TOrderData } from '../../utils/types';
 import type { TFeedState } from '../ws-types';
 
 // Initial state
-const initialState: TFeedState = {
+export const initialState: TFeedState = {
 	orders: [],
 	total: 0,
 	totalToday: 0,
